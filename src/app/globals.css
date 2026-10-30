@@ -1,26 +1,36 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@font-face { font-family: "42dot Sans"; font-style: normal; font-weight: 400; font-display: swap; src: url("/fonts/42dot-sans-regular.ttf") format("truetype"); }
+@font-face { font-family: "42dot Sans"; font-style: normal; font-weight: 500; font-display: swap; src: url("/fonts/42dot-sans-medium.ttf") format("truetype"); }
+@font-face { font-family: "42dot Sans"; font-style: normal; font-weight: 600; font-display: swap; src: url("/fonts/42dot-sans-semibold.ttf") format("truetype"); }
+@font-face { font-family: "42dot Sans"; font-style: normal; font-weight: 700; font-display: swap; src: url("/fonts/42dot-sans-bold.ttf") format("truetype"); }
+@font-face { font-family: "Noto Serif"; font-style: normal; font-weight: 400; font-display: swap; src: url("/fonts/noto-serif-regular.ttf") format("truetype"); }
+@font-face { font-family: "Noto Serif"; font-style: normal; font-weight: 500; font-display: swap; src: url("/fonts/noto-serif-medium.ttf") format("truetype"); }
+
+@theme {
+  --color-tan: #E4D0B7;
+  --color-ink: #11110F;
+  --color-court: #D9D9D9;
+  --color-paper: #F4EEE6;
+  --font-sans: "42dot Sans", Arial, sans-serif;
+  --font-editorial: "Noto Serif", Georgia, serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+@layer base {
+  html { scroll-behavior: smooth; scroll-padding-top: 6rem; }
+  body { background: var(--color-paper); color: var(--color-ink); font-family: var(--font-sans); }
+  button, a, input { -webkit-tap-highlight-color: transparent; }
+  button:not(:disabled), summary { cursor: pointer; }
+  :focus-visible { outline: 2px solid currentColor; outline-offset: 5px; }
+  ::selection { background: var(--color-ink); color: var(--color-tan); }
+  dialog::backdrop { background: rgb(17 17 15 / 65%); }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@media print {
+  header, footer, .no-print { display: none !important; }
+  body { background: white; color: black; }
 }
