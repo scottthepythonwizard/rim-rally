@@ -6,7 +6,7 @@ Routes call `src/services/facility-service.js`, which returns cloned fixture dat
 
 ## API contracts and future work
 
-Phase 2 implements REST availability and Open Play reads through one HTTP client with a mock/HTTP adapter switch. Discovery remains mock-backed. The remaining hold/payment endpoints below are future contracts; see API-CONTRACT.md for implemented scheduling details. JavaScript JSDoc defines service payloads. Server Components consume read services; the booking controller consumes interactive services. Do not add business API routes to Next.js.
+Phase 2 implements REST availability and Open Play reads through one HTTP client with a mock/HTTP adapter switch. Discovery remains mock-backed. Phase 3 adds hold create/update/get/release adapters and guest review; payment endpoints remain future contracts; see API-CONTRACT.md for implemented scheduling details. JavaScript JSDoc defines service payloads. Server Components consume read services; the booking controller consumes interactive services. Do not add business API routes to Next.js.
 
 - GET /facilities?sport=: facility list.
 - GET /facilities/:id: facility, image assets, amenities, courts, hours.

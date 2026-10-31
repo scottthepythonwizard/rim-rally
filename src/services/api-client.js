@@ -14,7 +14,7 @@ export function normalizeError(body, status = 0) {
   });
 }
 
-export async function getJson(path, { signal } = {}) {
+export async function requestJson(path, { signal, method = "GET", body, headers = {} } = {}) {
   const timeout = new AbortController();
   const abort = () => timeout.abort();
   if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
@@ -24,10 +24,11 @@ export async function getJson(path, { signal } = {}) {
   try {
     const base = process.env.NEXT_PUBLIC_API_BASE_URL;
     if (!base) throw new ApiError("CONFIGURATION", "The schedule service is not configured.");
-    const response = await fetch(`${base.replace(/\/$/, "")}${path}`, { signal: timeout.signal, cache: "no-store", headers: { Accept: "application/json" } });
-    const body = await response.json().catch(() => null);
-    if (!response.ok) throw normalizeError(body, response.status);
-    return body;
+    const response = await fetch(`${base.replace(/\/$/, "")}${path}`, { method, ...(body === undefined ? {} : { body: JSON.stringify(body) }), signal: timeout.signal, cache: "no-store", headers: { Accept: "application/json", ...(body === undefined ? {} : { "Content-Type": "application/json" }), ...headers } });
+    if (response.ok && response.status === 204 && method === "DELETE") return { released: true };
+    const responseBody = await response.json().catch(() => null);
+    if (!response.ok) throw normalizeError(responseBody, response.status);
+    return responseBody;
   } catch (error) {
     if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
     if (timedOut) throw new ApiError("TIMEOUT", "The schedule is taking too long. Please try again.", { retryable: true });
@@ -35,3 +36,5 @@ export async function getJson(path, { signal } = {}) {
     throw normalizeError(null);
   } finally { clearTimeout(timer); signal?.removeEventListener("abort", abort); }
 }
+
+export function getJson(path, options) { return requestJson(path, options); }

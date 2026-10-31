@@ -48,7 +48,7 @@ export function normalizeOptions(params, today) {
 }
 
 export function selectable(slot, now = Date.now()) {
-  return slot.status === "available" && new Date(slot.startAt).getTime() > now;
+  return (slot.status === "available" || (slot.status === "held" && slot.heldByYou === true)) && new Date(slot.startAt).getTime() > now;
 }
 
 /** Removing an interior hour would split the booking and is rejected. */

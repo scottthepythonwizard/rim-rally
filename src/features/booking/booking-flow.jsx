@@ -1,13 +1,16 @@
 "use client";
 
-import { useEffect, useReducer, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { getSchedule } from "@/services/scheduling-service";
 import DateNavigation from "./date-navigation";
 import BookingMatrix, { SlotLegend } from "./booking-matrix";
 import OpenPlay from "./open-play";
 import PriceSummary from "./price-summary";
-import { addDays, initialSelection, manilaDate, money, normalizeOptions, selectable, selectionReducer, totalAmount } from "./scheduling";
+import { addDays, manilaDate, money, normalizeOptions, selectable, toggleSlot, totalAmount } from "./scheduling";
+import useHoldFlow from "./use-hold-flow";
+import HoldCountdown from "./hold-countdown";
+import GuestDetails, { GuestReview } from "./guest-details";
 
 function requestReducer(state, action) {
   if (action.type === "LOADING") return { ...state, status: "loading", error: null };
@@ -49,11 +52,15 @@ export default function BookingFlow({ facility, serverNow }) {
 
 function ScheduleScope({ facility, options, change, initialNow }) {
   const [view, dispatchRequest] = useReducer(requestReducer, { status: "loading", data: null, error: null });
-  const [selection, dispatch] = useReducer(selectionReducer, initialSelection);
+  const [selectionMessage, setSelectionMessage] = useState("");
   const [attempt, setAttempt] = useState(0);
   const [now, setNow] = useState(initialNow);
   const anchor = useRef({ epoch: initialNow, monotonic: null });
   const { sport, date, mode, scenario } = options;
+  const holdContext = useMemo(() => ({ facilityId: facility.id, sport, date, mode }), [facility.id, sport, date, mode]);
+  const refreshAvailability = useCallback(() => setAttempt((value) => value + 1), []);
+  const flow = useHoldFlow(holdContext, refreshAvailability);
+  const selection = { slots: flow.hold?.slots || [], session: flow.hold?.session || null };
 
   useEffect(() => {
     let active = true;
@@ -65,7 +72,7 @@ function ScheduleScope({ facility, options, change, initialNow }) {
       request = controller;
       dispatchRequest({ type: "LOADING" });
       try {
-        const data = await getSchedule({ facilityId: facility.id, sport, date, scenario }, { mode, signal: controller.signal });
+        const data = await getSchedule({ facilityId: facility.id, sport, date, scenario }, { mode, signal: controller.signal, credential: flow.credential });
         if (!active || controller.signal.aborted) return;
         const epoch = Date.parse(data.serverNow);
         anchor.current = { epoch, monotonic: performance.now() };
@@ -82,7 +89,7 @@ function ScheduleScope({ facility, options, change, initialNow }) {
     window.addEventListener("focus", focus);
     window.addEventListener("online", focus);
     return () => { active = false; request?.abort(); clearInterval(interval); document.removeEventListener("visibilitychange", focus); window.removeEventListener("focus", focus); window.removeEventListener("online", focus); };
-  }, [facility.id, sport, date, mode, scenario, attempt]);
+  }, [facility.id, sport, date, mode, scenario, attempt, flow.credential]);
 
   useEffect(() => {
     const tick = setInterval(() => {
@@ -91,44 +98,52 @@ function ScheduleScope({ facility, options, change, initialNow }) {
     return () => clearInterval(tick);
   }, []);
 
-  useEffect(() => {
-    if (view.data) dispatch({ type: "RECONCILE", data: view.data, now });
-  }, [view.data, now]);
-
   const courts = view.data?.courts || [];
   const courtId = courts.some((court) => court.id === options.court) ? options.court : courts[0]?.id;
-  const blocked = view.status !== "ready";
+  const blocked = view.status !== "ready" || flow.busy || flow.step !== "selection";
   const sessions = view.data?.sessions || [];
   const hasData = mode === "court" ? courts.length > 0 : sessions.length > 0;
-  const soldOut = hasData && (mode === "court" ? !courts.some((court) => court.slots.some((slot) => selectable(slot, now))) : !sessions.some((session) => session.registeredCount < session.capacity && new Date(session.startAt).getTime() > now));
+  const soldOut = hasData && (mode === "court" ? !courts.some((court) => court.slots.some((slot) => selectable(slot, now))) : !sessions.some((session) => (session.registeredCount + (session.heldCount || 0) < session.capacity || session.heldByYou) && new Date(session.startAt).getTime() > now));
 
   function selectSlot(slot) {
     if (blocked) return;
+    const next = toggleSlot(selection.slots, slot, now);
+    if (next.error) { setSelectionMessage(next.error); return; }
+    setSelectionMessage("");
     if (slot.courtId !== courtId) change({ court: slot.courtId });
-    dispatch({ type: "TOGGLE_SLOT", slot, now });
+    void flow.mutate(next.slots, null);
   }
   const amount = selection.session ? selection.session.amount : totalAmount(selection.slots);
   const selectedCount = selection.slots.length || (selection.session ? 1 : 0);
   return <>
+    <div className="sticky top-0 z-20 mt-5 bg-paper pt-2" aria-label="Hold status">
+      {(flow.hold || flow.busy) && <HoldCountdown remaining={flow.remaining} status={flow.status} hasHold={Boolean(flow.hold)} verified={flow.verified} />}
+      {flow.message && <p role={/recovered|cancelled/.test(flow.message) ? "status" : "alert"} className="mb-4 rounded-lg border border-ink/25 bg-tan/50 px-4 py-3 text-xs leading-6">{flow.message}</p>}
+      {(flow.status === "uncertain" || (flow.hold && !flow.verified && !flow.busy)) && <button type="button" onClick={() => flow.recover()} className="mb-4 min-h-11 rounded-full border border-ink px-5 text-xs">Retry hold check</button>}
+    </div>
     <div className="mt-5 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_290px] xl:grid-cols-[minmax(0,1fr)_310px]">
+      {flow.step === "details" ? <GuestDetails flow={flow} /> : flow.step === "review" ? <GuestReview flow={flow} /> :
       <section aria-label={mode === "court" ? "Court schedule" : "Open Play sessions"} className="min-w-0">
         <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-          {mode === "court" && courts.length > 0 ? <label className="flex items-center gap-3 text-xs">Court<select aria-label="Choose court" value={courtId} onChange={(event) => { dispatch({ type: "CLEAR" }); change({ court: event.target.value }); }} className="min-h-11 max-w-full rounded-lg border border-ink/20 bg-paper px-3">{courts.map((court) => <option key={court.id} value={court.id}>{court.name}</option>)}</select></label> : <p className="font-editorial text-sm">{mode === "open-play" ? "Find your people. Join a session." : "Hourly availability"}</p>}
+          {mode === "court" && courts.length > 0 ? <label className="flex items-center gap-3 text-xs">Court<select aria-label="Choose court" value={courtId} disabled={flow.busy} onChange={async (event) => { const value = event.target.value; if (await flow.cancel()) { setSelectionMessage(""); change({ court: value }); } }} className="min-h-11 max-w-full rounded-lg border border-ink/20 bg-paper px-3">{courts.map((court) => <option key={court.id} value={court.id}>{court.name}</option>)}</select></label> : <p className="font-editorial text-sm">{mode === "open-play" ? "Find your people. Join a session." : "Hourly availability"}</p>}
           <button type="button" disabled={view.status === "loading"} onClick={() => setAttempt((value) => value + 1)} className="min-h-11 text-xs underline underline-offset-4 disabled:opacity-40">Refresh availability</button>
         </div>
         {mode === "court" && <div className="mb-5"><SlotLegend /></div>}
-        {selection.message && <p role="alert" className="mb-5 rounded-lg border border-ink/25 bg-tan/50 px-4 py-3 text-xs leading-6">{selection.message}</p>}
+        {selectionMessage && <p role="alert" className="mb-5 rounded-lg border border-ink/25 bg-tan/50 px-4 py-3 text-xs leading-6">{selectionMessage}</p>}
         {view.status === "error" && <div role="alert" className="mb-5 rounded-xl border border-ink/25 bg-tan/40 p-5"><h3 className="font-semibold">We couldn’t load the schedule.</h3><p className="mt-2 text-xs leading-6">{view.error?.message || "Please try again."}</p><button type="button" onClick={() => setAttempt((value) => value + 1)} className="mt-3 min-h-11 rounded-full bg-ink px-5 text-xs text-paper">Try again</button></div>}
         {view.status === "loading" && !view.data && <ScheduleSkeleton />}
         {view.status === "loading" && view.data && <p role="status" className="mb-3 text-xs">Refreshing availability…</p>}
         {view.status === "ready" && !hasData && <div className="rounded-xl border border-dashed border-ink/25 p-10 text-center"><h3 className="font-editorial text-xl">No schedules for this day.</h3><p className="mt-3 text-sm leading-7">Choose another date or sport to find your next game.</p><button onClick={() => change({ date: addDays(date, 1) })} className="mt-5 min-h-11 rounded-full bg-ink px-5 text-xs text-paper">Try the next day</button></div>}
         {soldOut && <p role="status" className="mb-5 rounded-lg border border-ink/20 bg-court/40 p-4 text-xs leading-6">No available {mode === "court" ? "hours" : "places"} remain for this day. Choose another date or sport.</p>}
-        {hasData && (mode === "court" ? <BookingMatrix {...{ courts, courtId, now, blocked }} slots={selection.slots} onSelect={selectSlot} /> : <OpenPlay {...{ sessions, now, blocked }} selection={selection.session} onSelect={(session) => dispatch({ type: "SESSION", session })} />)}
+        {hasData && (mode === "court" ? <BookingMatrix {...{ courts, courtId, now, blocked }} slots={selection.slots} onSelect={selectSlot} /> : <OpenPlay {...{ sessions, now, blocked }} selection={selection.session} onSelect={(session) => flow.mutate([], selection.session?.id === session.id ? null : session)} />)}
         <p className="mt-4 text-[10px] leading-6 text-ink/60">{mode === "court" ? "Rates are per court, per hour. Select consecutive hours on one court. Midnight ends on the following day." : "One place per guest booking. Player counts refresh with availability."}</p>
-      </section>
-      <PriceSummary {...{ date, sport, courts }} slots={selection.slots} session={selection.session} onClear={() => dispatch({ type: "CLEAR" })} stale={blocked} />
+      </section>}
+      <PriceSummary {...{ date, sport, courts }} slots={selection.slots} session={selection.session} onClear={() => flow.cancel()} stale={view.status === "error"} disabled={flow.busy}>
+        {flow.hold && flow.step === "selection" && <button type="button" disabled={!flow.canContinue || flow.busy} onClick={() => flow.enterDetails()} className="mt-5 min-h-11 w-full rounded-full bg-ink px-5 font-editorial text-xs text-paper disabled:opacity-40">Enter guest details</button>}
+      </PriceSummary>
     </div>
-    {selectedCount > 0 && <div className="fixed inset-x-0 bottom-0 z-20 flex items-center justify-between gap-4 border-t border-ink/20 bg-paper px-5 py-3 lg:hidden"><p className="text-xs">{selectedCount} {selection.session ? "place" : selectedCount === 1 ? "hour" : "hours"}<span className="mt-1 block text-[10px] text-ink/60">Selected · not reserved</span></p><output aria-label="Mobile selection total" className="font-editorial text-xl">{money(amount)}</output><a href="#summary-title" className="rounded-full bg-ink px-5 py-3 text-xs text-paper">Review</a></div>}
+    {selectedCount > 0 && flow.step === "selection" && <div className="fixed inset-x-0 bottom-0 z-20 flex items-center justify-between gap-4 border-t border-ink/20 bg-paper px-5 py-3 lg:hidden"><p className="text-xs">{selectedCount} {selection.session ? "place" : selectedCount === 1 ? "hour" : "hours"}<span className="mt-1 block text-[10px] text-ink/60">Temporarily held</span></p><output aria-label="Mobile selection total" className="font-editorial text-xl">{money(amount)}</output><a href="#summary-title" className="rounded-full bg-ink px-5 py-3 text-xs text-paper">Review</a></div>}
+    {flow.hold && process.env.NEXT_PUBLIC_API_MODE !== "http" && <details className="mt-5 text-xs text-ink/65"><summary className="min-h-11 py-3">Demo hold controls</summary><button type="button" disabled={flow.busy} onClick={() => flow.expireDemo()} className="min-h-11 rounded-full border border-ink/30 px-5">Expire demo hold</button><p className="mt-3 leading-6">This hold is simulated in this browser. Cross-user locking needs the backend.</p></details>}
   </>;
 }
 

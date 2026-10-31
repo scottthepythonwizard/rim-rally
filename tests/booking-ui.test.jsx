@@ -10,7 +10,7 @@ describe("booking controls", () => {
     const slot = mockAvailability(query).courts[0].slots[0];
     const onSelect = vi.fn();
     const { rerender } = render(<SlotButton slot={{ ...slot, status: "available" }} courtName="Court 1" now={0} selected onSelect={onSelect} />);
-    const button = screen.getByRole("button", { name: /Court 1.*Selected/ });
+    const button = screen.getByRole("button", { name: /Court 1.*Held for you/ });
     expect(button).toHaveAttribute("aria-pressed", "true");
     fireEvent.click(button); expect(onSelect).toHaveBeenCalledTimes(1);
     rerender(<SlotButton slot={{ ...slot, status: "held" }} courtName="Court 1" now={0} selected={false} onSelect={onSelect} />);

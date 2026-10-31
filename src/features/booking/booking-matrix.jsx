@@ -13,7 +13,7 @@ export function SlotLegend() {
 export function SlotButton({ slot, courtName, selected, now, blocked, onSelect }) {
   const elapsed = new Date(slot.startAt).getTime() <= now;
   const enabled = selectable(slot, now) && !blocked;
-  const label = elapsed ? "Elapsed" : selected ? "Selected" : slot.status === "held" ? "Held" : slot.status === "booked" ? "Booked" : "Available";
+  const label = elapsed ? "Elapsed" : selected ? "Held for you" : slot.status === "held" ? "Held" : slot.status === "booked" ? "Booked" : "Available";
   const styles = selected ? "border-ink bg-ink text-paper" : label === "Held" ? "border-dashed border-ink/40 bg-tan" : label === "Booked" || elapsed ? "border-transparent bg-court text-ink/55" : "border-ink/15 bg-paper hover:border-ink hover:bg-tan/60";
   return <button type="button" data-testid={`slot-${slot.id}`} aria-label={`${courtName}, ${formatTime(slot.startAt)} to ${formatTime(slot.endAt)}, ${label}, ${money(slot.amount)}`} aria-pressed={selected} disabled={!enabled} onClick={() => onSelect(slot)} className={`flex min-h-16 w-full flex-col items-center justify-center gap-1 rounded-md border px-2 py-2 text-[11px] transition-colors disabled:cursor-not-allowed ${styles}`}>
     <span className="font-medium">{selected && <span aria-hidden="true">✓ </span>}{label}</span>

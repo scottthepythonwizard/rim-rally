@@ -79,9 +79,9 @@ Reduce animation and gallery enhancements first if time runs short. Preserve boo
 
 ## Current status
 
-Phase 1 and Phase 2 are implemented. Scheduling is a mock-backed selection preview, not a confirmed booking system.
+Phases 1–3 are implemented and verified. The frontend supports temporary mock holds and guest review; a confirmed booking still requires Phase 4 checkout and backend integration.
 
-Next session: Phase 3 — acknowledged ten-minute holds, atomic selection updates without extending expiry, guest details, and recovery. Wait for the user to request Phase 3 before starting it.
+Next session: Phase 4 — simulated GCash/Maya/QRPh checkout, payment status recovery, confirmation, receipt and printable QR pass. Start only when the user requests Phase 4.
 
 ### Verification evidence — October 30
 
@@ -117,3 +117,15 @@ Backend handoff: docs/API-CONTRACT.md. API inventory/rates/capacities remain ill
 
 Verification: 22 unit/component tests and 5 browser acceptance tests pass; production build and lint pass. Browser checks found no horizontal overflow at 360, 390, 768, 1024 or 1440px. Calendar close restores focus. Desktop court columns/mobile single-court layout, date history, stale-request handling and recoverable scenarios were checked.
 Screenshots: [desktop](screenshots/phase-2-desktop.jpg), [mobile](screenshots/phase-2-mobile.jpg), [calendar](screenshots/phase-2-calendar.jpg).
+
+## Phase 3 implementation — October 31
+
+Completed acknowledged ten-minute holds for private court hours and one-place Open Play selections. Added atomic same-court edits preserving expiry, held-for-you states, sticky countdown, cancellation, changed-context release, reload recovery, foreground/online checks, idempotent recovery after uncertain requests, guest-details validation and review. Guest contact details are never persisted in browser storage.
+
+The mock uses shared browser-local non-personal hold records with Web Locks serialization. The HTTP service and proposed API contract are ready for backend agreement; production locking still belongs to the backend. Existing landing edits, gray section outlines, square rounded location placeholder and PHP 400 hourly rates were preserved.
+
+Verification: 37 unit/component tests and 14 browser tests pass; lint and production build pass. Tests exercise expiry after a long pause, same-slot competition across tabs, final Open Play capacity, released holds, unchanged expiry after edits/retries, mismatched acknowledgements, malformed ownership data, private-data storage checks, guest validation and five responsive widths.
+
+Handoff: [hold API contract](HOLD-API-CONTRACT.md). Screenshots use fictitious demonstration contact details: [review](screenshots/phase-3-review.jpg), [mobile guest details](screenshots/phase-3-mobile.jpg).
+
+Next milestone is Phase 4 checkout and digital passes. No payment or confirmed booking is implemented in this phase.
