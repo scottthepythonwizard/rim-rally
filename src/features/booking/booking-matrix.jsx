@@ -34,7 +34,7 @@ export default function BookingMatrix({ courts, courtId, slots, now, blocked, on
     <div className="hidden max-h-[710px] overflow-auto rounded-xl border border-ink/15 md:block">
       <table className="w-full table-fixed border-collapse text-xs">
         <caption className="sr-only">Hourly court availability, 8 AM to midnight. Prices per hour. All times in Asia/Manila.</caption>
-        <thead className="sticky top-0 z-10 bg-paper"><tr><th scope="col" className="w-32 border-b border-ink/15 px-3 py-5 text-left">Time</th>{courts.map((court) => <th key={court.id} scope="col" className={`border-b border-ink/15 p-3 text-center font-medium ${court.id === courtId ? "bg-tan/50" : ""}`}>{court.name}<span className="mt-1 block text-[10px] font-normal text-ink/55">{court.kind}</span></th>)}</tr></thead>
+        <thead className="sticky top-0 z-10 bg-paper"><tr><th scope="col" className="w-32 border-b border-ink/15 px-3 py-5 text-left">Time</th>{courts.map((court) => <th key={court.id} scope="col" className={`border-b border-ink/15 p-3 text-center font-medium ${court.id === courtId ? "bg-tan/50" : ""}`}>{court.name}</th>)}</tr></thead>
         <tbody>{courts[0].slots.map((row, position) => <MatrixRow key={row.id} {...{ row, position, courts, courtId, selectedIds, now, blocked, onSelect }} />)}</tbody>
       </table>
     </div>

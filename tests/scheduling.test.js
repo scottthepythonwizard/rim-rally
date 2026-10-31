@@ -24,6 +24,19 @@ describe("Philippine scheduling", () => {
   });
 });
 
+describe("confirmed court inventory and hourly pricing", () => {
+  it("provides one basketball half-court and PHP 400 hourly slots for both sports", () => {
+    for (const sport of ["pickleball", "basketball"]) {
+      const data = mockAvailability({ facilityId: "rim-and-rally", sport, date });
+      expect(data.courts).toHaveLength(sport === "basketball" ? 1 : 3);
+      for (const court of data.courts) {
+        expect(court.slots).toHaveLength(16);
+        expect(court.slots.every((item) => item.amount === 40000)).toBe(true);
+        expect(new Set(court.slots.map((item) => item.priceBand))).toEqual(new Set(["peak", "off-peak"]));
+      }
+    }
+  });
+});
 describe("selection and totals", () => {
   it("adds adjacent hours, including before the first selection", () => {
     const result = toggleSlot([slot(9)], slot(8), now);

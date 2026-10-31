@@ -21,9 +21,9 @@ Response fields:
 - `slots` contains exactly 16 ordered hourly entries, from 08:00 to next-day 00:00. Include unavailable entries so court columns align by time.
 - `status`: `available`, `held`, or `booked`. `selected` is frontend state, never a server availability value.
 - `priceBand`: `peak` or `off-peak`. Rates are supplied by the API, not calculated from frontend peak-hour rules.
-- `amount`: nonnegative safe integer in PHP centavos. 35000 represents ₱350. Do not send formatted currency or decimal peso strings.
+- `amount`: nonnegative safe integer in PHP centavos. 40000 represents ₱400. Do not send formatted currency or decimal peso strings.
 
-Example slot values: id `2030-01-01_pickleball-1_8`, courtId `pickleball-1`, startAt `2030-01-01T08:00:00+08:00`, endAt `2030-01-01T09:00:00+08:00`, status `available`, priceBand `off-peak`, amount `35000`.
+Example slot values: id `2030-01-01_pickleball-1_8`, courtId `pickleball-1`, startAt `2030-01-01T08:00:00+08:00`, endAt `2030-01-01T09:00:00+08:00`, status `available`, priceBand `off-peak`, amount `40000`.
 
 The final slot must start at `2030-01-01T23:00:00+08:00` and end at `2030-01-02T00:00:00+08:00` for that date. Expired slots remain in the schedule but are disabled by frontend time comparison.
 
@@ -45,7 +45,7 @@ The client normalizes malformed, non-JSON and unexpected responses to safe notic
 
 Use the collapsed “Demo availability scenarios” controls, or URL `scenario=normal|sold-out|empty|error|slow|malformed`.
 
-Demo data includes three pickleball courts, two basketball half-courts, available/held/booked examples, a nearly full Open Play session and a full session. These court counts, rates, capacities and peak windows are illustrative. Replace them with approved API data.
+Demo data includes three pickleball courts and one basketball half-court, available/held/booked examples, a nearly full Open Play session and a full session. The user confirmed one basketball half-court and a flat PHP 400 per court-hour for both sports, including peak and off-peak hours. All courts are indoor; the UI omits that repeated label. Availability, Open Play prices/capacities, peak windows and the three-court pickleball fixture remain illustrative. Replace fixtures with approved API data.
 
 Simulated latency is 250ms or 2400ms for `slow`. `error` persists until changing scenario (a retry does not secretly change server conditions). `malformed` proves validation fallback. `empty` publishes no schedules. `sold-out` returns booked courts/full sessions.
 

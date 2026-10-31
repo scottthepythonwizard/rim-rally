@@ -49,4 +49,4 @@ Copy `.env.example` to `.env.local` if configuring a live service. `NEXT_PUBLIC_
 
 ## Design and scope
 
-Preserve the supplied prototype and corrected content. All court/facility image areas use neutral local SVG placeholders; add actual images only at the user's direction. Square frames remain 1:1. The logo is still an approximation until original artwork is supplied. Court counts, rates, capacities and peak windows are explicitly demo data pending backend confirmation.
+Preserve the supplied prototype and corrected content. All court/facility image areas use neutral local SVG placeholders; add actual images only at the user's direction. Square frames remain 1:1. The logo is still an approximation until original artwork is supplied. The user confirmed one basketball half-court and flat PHP 400/hour court rates for both sports. Availability, Open Play rates/capacities, peak windows and the three-court pickleball fixture remain demo data pending backend confirmation.

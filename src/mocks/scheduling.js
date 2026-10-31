@@ -1,10 +1,10 @@
 import { atHour } from "@/features/booking/scheduling";
 
-/** Demo inventory and rates, not approved facility pricing or court counts. */
+/** Demo availability. User-confirmed hourly rate: PHP 400 for both sports; one basketball half-court. */
 export function mockAvailability({ facilityId, sport, date, scenario }, now = new Date()) {
   const serverNow = now.toISOString();
   if (scenario === "empty") return { facilityId, sport, date, serverNow, courts: [] };
-  const courts = Array.from({ length: sport === "pickleball" ? 3 : 2 }, (_, index) => {
+  const courts = Array.from({ length: sport === "pickleball" ? 3 : 1 }, (_, index) => {
     const id = `${sport}-${index + 1}`;
     return {
       id, name: sport === "pickleball" ? `Court ${index + 1}` : `Half-court ${index + 1}`, kind: "Indoor",
@@ -13,7 +13,7 @@ export function mockAvailability({ facilityId, sport, date, scenario }, now = ne
         const peak = hour >= 17 && hour < 22;
         const marker = (position + index * 3 + Number(date.slice(-2))) % 11;
         const status = scenario === "sold-out" ? "booked" : marker === 4 || marker === 7 ? "booked" : marker === 6 ? "held" : "available";
-        return { id: `${date}_${id}_${hour}`, courtId: id, startAt: atHour(date, hour), endAt: atHour(date, hour + 1), status, priceBand: peak ? "peak" : "off-peak", amount: sport === "pickleball" ? (peak ? 50000 : 35000) : (peak ? 80000 : 60000) };
+        return { id: `${date}_${id}_${hour}`, courtId: id, startAt: atHour(date, hour), endAt: atHour(date, hour + 1), status, priceBand: peak ? "peak" : "off-peak", amount: 40000 };
       }),
     };
   });
