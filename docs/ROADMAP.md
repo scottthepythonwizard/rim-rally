@@ -79,9 +79,9 @@ Reduce animation and gallery enhancements first if time runs short. Preserve boo
 
 ## Current status
 
-Phases 1–3 are implemented and verified. The frontend supports temporary mock holds and guest review; a confirmed booking still requires Phase 4 checkout and backend integration.
+Phases 1–4 are implemented with browser mocks. The guest journey includes acknowledged holds, guest details, simulated payments and confirmed demo passes. Production payments and allocation require backend/provider integration.
 
-Next session: Phase 4 — simulated GCash/Maya/QRPh checkout, payment status recovery, confirmation, receipt and printable QR pass. Start only when the user requests Phase 4.
+Next session: final responsive/accessibility review, backend contract agreement, asset handoff and demo rehearsal. Preserve the guest-only scope.
 
 ### Verification evidence — October 30
 
@@ -129,3 +129,19 @@ Verification: 37 unit/component tests and 14 browser tests pass; lint and produc
 Handoff: [hold API contract](HOLD-API-CONTRACT.md). Screenshots use fictitious demonstration contact details: [review](screenshots/phase-3-review.jpg), [mobile guest details](screenshots/phase-3-mobile.jpg).
 
 Next milestone is Phase 4 checkout and digital passes. No payment or confirmed booking is implemented in this phase.
+## Phase 4 foundation — November 1
+
+Prepared GCash/Maya/QRPh method selection in the guest review screen, a payment response contract and validator, a guard requiring both successful payment and confirmed booking before showing confirmation, and mock fixtures for pending/success/booking-pending/failure/cancellation/unknown states. Payment submission remains disabled; no payment or booking mutation is connected.
+
+Verified: 43 unit/component tests pass, the payment-method preview browser test passes, lint passes, and production build passes. Existing Phase 3 hold behavior and landing-page design remain in place.
+
+Resume on November 2, Asia/Manila: follow [PHASE-4-FOUNDATION.md](PHASE-4-FOUNDATION.md). Start with the payment-attempt controller and idempotent mock/API services, then payment dialogs, status recovery, confirmed receipt/QR pass and print styling. Phase 4 is not complete yet.
+## Phase 4 implementation — November 1
+
+Completed the payment foundation: accessible GCash/Maya/QRPh dialogs, mobile/reference validation, service-bound quote/revision checks, idempotent submission, three-second visible polling, two-minute delayed recovery, failed retry/cancellation, unknown/malformed/lost-acknowledgement reconciliation, confirmed receipt, per-booking opaque QR token and print/save-PDF layout. Mock payment/allocation operations share the same Web Lock/store as holds, keep confirmed slots booked, and protect pending allocation beyond the original timer.
+
+Guest details remain memory-only and survive returning after failure within the page; refresh clears them. Recovered demo receipts explicitly indicate the cleared guest name. Backend must provide guestName in live receipts. Real QRPh, provider cancellation and by-key recovery need backend agreement; no money processing is implemented.
+
+Handoff: [payment API contract](PAYMENT-API-CONTRACT.md). The foundation checklist above is historical and superseded by this implementation. Final verification results are recorded in the README after the test run.
+
+Verification: 54 unit/component and 28 browser tests pass; lint/build pass. Desktop/mobile pass screenshots are saved under docs/screenshots/phase-4-*.jpg. No GitHub push or deployment was performed in this session.

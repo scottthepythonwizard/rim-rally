@@ -34,3 +34,11 @@
   header, footer, .no-print { display: none !important; }
   body { background: white; color: black; }
 }
+
+@media print {
+  @page { size: A4; margin: 14mm; }
+  html { scroll-padding: 0; }
+  main { padding: 0 !important; }
+  .digital-pass { max-width: 170mm; margin: 0 auto; border-color: black; print-color-adjust: exact; }
+  .digital-pass svg { width: 50mm; height: 50mm; }
+}

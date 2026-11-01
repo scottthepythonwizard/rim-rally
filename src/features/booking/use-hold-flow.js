@@ -17,10 +17,10 @@ function readRecovery() {
   } catch { throw new ApiError("STORAGE_ERROR", "This browser could not read your hold recovery information. Enable session storage before continuing."); }
 }
 
-export default function useHoldFlow(context, onChanged) {
+export default function useHoldFlow(context, onChanged, initialGuest) {
   const [state, dispatch] = useReducer(holdReducer, holdState);
   const [remaining, setRemaining] = useState(0);
-  const [guest, setGuest] = useState(blankGuest);
+  const [guest, setGuest] = useState(initialGuest || blankGuest);
   const [fieldErrors, setFieldErrors] = useState({});
   const active = useRef(false);
   const busy = useRef(false);
@@ -85,13 +85,13 @@ export default function useHoldFlow(context, onChanged) {
       const hold = await execute(record);
       if (!active.current) return false;
       if (!hold) { save(null); acknowledged.current = null; dispatch({ type: "BROWSE", message: "Your temporary hold was cancelled." }); onChanged(); return false; }
-      accept(hold, record, message); return true;
+      accept(hold, record, message); return hold;
     } catch (error) {
       if (terminal(error)) { expire(); return false; }
       if (definitive(error)) {
         const record = recovery.current;
         if (record?.id) {
-          try { const latest = await getHold(record.id, { credential: record.credential }); accept(latest, record, error.message); return true; }
+          try { const latest = await getHold(record.id, { credential: record.credential }); accept(latest, record, error.message); return latest; }
           catch (checkError) { if (terminal(checkError)) { expire(); return false; } }
         } else { save(null); acknowledged.current = null; if (active.current) dispatch({ type: "BROWSE", message: error.message }); onChanged(); return false; }
       }

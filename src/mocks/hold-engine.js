@@ -1,3 +1,4 @@
+import { paymentEngine } from "./payment-engine";
 import { ApiError } from "@/services/api-client";
 import { mockAvailability, mockOpenPlay } from "./scheduling";
 import { toggleSlot } from "@/features/booking/scheduling";
@@ -7,7 +8,7 @@ export const HOLD_STORE = "rim-rally:demo-holds:v1";
 
 /** Browser-only simulation, with injected storage/clock for deterministic tests. No guest PII is stored. */
 export function createHoldEngine({ read, write, lock, hash, now = Date.now, random = () => crypto.randomUUID() }) {
-  const active = (hold) => !hold.released && Date.parse(hold.expiresAt) > now();
+  const active = (hold) => !hold.released && (hold.booked || hold.paymentPending || Date.parse(hold.expiresAt) > now());
   const snapshot = (hold) => ({ ...structuredClone(hold), recoveryHash: undefined, operations: undefined, serverNow: new Date(now()).toISOString() });
   const authorize = async (hold, credential) => {
     if (!hold || !credential || hold.recoveryHash !== await hash(credential)) throw new ApiError("NOT_FOUND", "This temporary hold could not be found. Please select your time again.");
@@ -18,7 +19,7 @@ export function createHoldEngine({ read, write, lock, hash, now = Date.now, rand
     if (!db || db.version !== 1 || !Array.isArray(db.holds)) throw new ApiError("STORAGE_ERROR", "The demo hold store could not be read. Please try again.", { retryable: true });
     return db;
   };
-  const save = (db) => { db.holds = db.holds.filter((item) => Date.parse(item.expiresAt) > now() - 86400000); write(db); };
+  const save = (db) => { db.holds = db.holds.filter((item) => item.booked || item.paymentPending || Date.parse(item.expiresAt) > now() - 86400000); write(db); };
 
   function quote(input, db, ignoreId) {
     const others = db.holds.filter((hold) => hold.id !== ignoreId && active(hold));
@@ -44,6 +45,7 @@ export function createHoldEngine({ read, write, lock, hash, now = Date.now, rand
   }
 
   return {
+    ...paymentEngine({ lock, getStore, save, authorize, ensureActive, snapshot, now, random }),
     async create(input, { credential, idempotencyKey }) {
       return lock(async () => {
         const db = getStore();
@@ -63,6 +65,7 @@ export function createHoldEngine({ read, write, lock, hash, now = Date.now, rand
       return lock(async () => {
         const db = getStore(); const hold = db.holds.find((item) => item.id === id);
         await authorize(hold, credential); ensureActive(hold);
+        if (hold.paymentPending || hold.booked) throw new ApiError("PAYMENT_PENDING", "This allocation is managed by checkout. Check payment status.");
         if (hold.operations.includes(idempotencyKey)) return snapshot(hold);
         if (hold.revision !== revision) throw new ApiError("REVISION_CONFLICT", "Your hold changed in another tab. Check your hold before continuing.");
         if (hold.context.mode !== "court") throw new ApiError("INVALID_SELECTION", "Choose another session to change your Open Play reservation.");
@@ -72,7 +75,7 @@ export function createHoldEngine({ read, write, lock, hash, now = Date.now, rand
       });
     },
     async release(id, { credential }) {
-      return lock(async () => { const db = getStore(); const hold = db.holds.find((item) => item.id === id); await authorize(hold, credential); hold.released = true; save(db); return { released: true }; });
+      return lock(async () => { const db = getStore(); const hold = db.holds.find((item) => item.id === id); await authorize(hold, credential); if (hold.paymentPending || hold.booked) throw new ApiError("PAYMENT_PENDING", "Check payment status before releasing this allocation."); hold.released = true; save(db); return { released: true }; });
     },
     async expire(id, { credential }) {
       return lock(async () => { const db = getStore(); const hold = db.holds.find((item) => item.id === id); await authorize(hold, credential); hold.expiresAt = new Date(now() - 1).toISOString(); save(db); return { expired: true }; });
@@ -80,8 +83,8 @@ export function createHoldEngine({ read, write, lock, hash, now = Date.now, rand
     async overlay(data, credential) {
       const db = getStore(); const ownedHash = credential ? await hash(credential) : null;
       const holds = db.holds.filter(active);
-      if (data.courts) return { ...data, courts: data.courts.map((court) => ({ ...court, slots: court.slots.map((slot) => { const holder = holds.find((hold) => hold.slots.some((item) => item.id === slot.id)); return holder ? { ...slot, status: "held", heldByYou: holder.recoveryHash === ownedHash } : slot; }) })) };
-      return { ...data, sessions: data.sessions.map((session) => { const matching = holds.filter((hold) => hold.session?.id === session.id); return { ...session, registeredCount: Math.min(session.registeredCount, session.capacity - matching.length), heldCount: matching.length, heldByYou: matching.some((hold) => hold.recoveryHash === ownedHash) }; }) };
+      if (data.courts) return { ...data, courts: data.courts.map((court) => ({ ...court, slots: court.slots.map((slot) => { const holder = holds.find((hold) => hold.slots.some((item) => item.id === slot.id)); return holder ? { ...slot, status: holder.booked ? "booked" : "held", heldByYou: !holder.booked && holder.recoveryHash === ownedHash } : slot; }) })) };
+      return { ...data, sessions: data.sessions.map((session) => { const matching = holds.filter((hold) => hold.session?.id === session.id); return { ...session, registeredCount: Math.min(session.capacity, Math.min(session.registeredCount, session.capacity - matching.length) + matching.filter((h) => h.booked).length), heldCount: matching.filter((h) => !h.booked).length, heldByYou: matching.some((hold) => !hold.booked && hold.recoveryHash === ownedHash) }; }) };
     },
   };
 }

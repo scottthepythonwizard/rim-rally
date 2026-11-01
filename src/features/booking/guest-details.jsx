@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { normalizeMobile } from "./hold-state";
+import PaymentMethods from "@/features/checkout/payment-methods";
 
 export default function GuestDetails({ flow }) {
   const form = useRef(null);
@@ -26,11 +27,12 @@ export default function GuestDetails({ flow }) {
   </section>;
 }
 
-export function GuestReview({ flow }) {
+export function GuestReview({ flow, onCheckout, initialPayment }) {
   return <section aria-labelledby="review-title" className="rounded-xl border border-ink/20 bg-paper p-6 md:p-8">
     <p className="text-[10px] tracking-widest uppercase">Step 3 / Review</p><h2 id="review-title" className="mt-3 font-editorial text-2xl">Your game is taking shape.</h2>
     <dl className="mt-6 divide-y divide-ink/15 text-sm"><div className="py-4"><dt className="text-[10px] tracking-widest uppercase">Guest</dt><dd className="mt-2 break-words">{flow.guest.name.trim()}</dd></div><div className="py-4"><dt className="text-[10px] tracking-widest uppercase">Email</dt><dd className="mt-2 break-all">{flow.guest.email.trim()}</dd></div><div className="py-4"><dt className="text-[10px] tracking-widest uppercase">Mobile</dt><dd className="mt-2">{normalizeMobile(flow.guest.mobile)}</dd></div></dl>
-    <div role="status" className="mt-6 rounded-lg border border-ink/20 bg-tan/40 p-4 text-xs leading-7">Your guest details are ready. Payment is not available in this preview. Your reservation is not confirmed, and your temporary hold still expires at its original deadline.</div>
+    <div role="status" className="mt-6 rounded-lg border border-ink/20 bg-tan/40 p-4 text-xs leading-7">Review your details before checkout. Your reservation is confirmed only after the service verifies payment and your place.</div>
+    <PaymentMethods holdValid={flow.canContinue && !flow.busy} flow={flow} onCheckout={onCheckout} initialPayment={initialPayment} />
     <div className="mt-5 flex flex-wrap gap-3"><button type="button" onClick={() => flow.back("details")} className="min-h-11 rounded-full border border-ink px-5 text-xs">Edit guest details</button><button type="button" onClick={() => flow.back("selection")} className="min-h-11 px-3 text-xs underline underline-offset-4">Back to schedule</button></div>
   </section>;
 }

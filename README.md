@@ -13,7 +13,7 @@ Prerequisite: Node.js 20.9 or newer (developed with Node 24).
 
 Other commands: `npm run lint`, `npm run build`, and `npm start` (after a build).
 
-## Current milestone: Phase 3 holds and guest details
+## Current milestone: Phase 4 checkout and digital passes
 
 - Prototype-based landing page with the user's corrected copy and navigation.
 - Supplied theme colors, local 42dot Sans / Noto Serif, neutral image placeholders.
@@ -27,7 +27,7 @@ Other commands: `npm run lint`, `npm run build`, and `npm start` (after a build)
 - Loading, retry, no-schedule, sold-out, slow and malformed-response previews.
 - Abortable reads, 15-second HTTP timeout, validation, refresh/reconciliation.
 
-**Not yet implemented:** checkout, payments, confirmed bookings, receipts and QR tickets. The hold is temporary and is not a confirmed reservation.
+**Implemented with mocks:** GCash/Maya/QRPh checkout, payment recovery, confirmed demo receipts and printable QR passes. Real money processing, production allocation and ticket verification still require the backend.
 
 ## Tests
 
@@ -45,7 +45,7 @@ See [roadmap](docs/ROADMAP.md) for progress and next tasks, [API contract](docs/
 
 `src/app/` contains Server Component route shells. `src/features/booking/` contains the small client booking boundary, presentational views, date helpers, and selection reducer. `src/services/` owns HTTP/mock adapters and validation. `src/mocks/` contains illustrative inventory and pricing. Components never query a database.
 
-Copy `.env.example` to `.env.local` if configuring a live service. `NEXT_PUBLIC_API_MODE=http` enables scheduling and hold HTTP adapters; the default is mock. `NEXT_PUBLIC_API_BASE_URL` supplies the API base URL. Facility discovery remains mock-backed. Restart Next.js after environment changes. See the API contract for CORS and response requirements.
+Copy `.env.example` to `.env.local` if configuring a live service. `NEXT_PUBLIC_API_MODE=http` enables scheduling, hold, payment and booking HTTP adapters (provider QRPh/cancellation still require agreement); the default is mock. `NEXT_PUBLIC_API_BASE_URL` supplies the API base URL. Facility discovery remains mock-backed. Restart Next.js after environment changes. See the API contract for CORS and response requirements.
 
 ## Design and scope
 
@@ -65,3 +65,14 @@ Preserve the supplied prototype and corrected content. All court/facility image 
 Backend agreement and live integration details: [hold API contract](docs/HOLD-API-CONTRACT.md). The existing scheduling API contract remains applicable, with ownership fields described in the hold contract.
 
 Verified: 37 unit/component tests, 14 browser acceptance tests, lint and production build. Browser tests cover late/uncertain acknowledgements, cross-tab conflicts, Open Play capacity, expiry, reload recovery, private-data storage checks, and guest-form responsiveness at 360/390/768/1024/1440px.
+### Phase 4 checkout (November 1)
+
+Payment dialogs now connect to the acknowledged hold. The service determines payment/booking status; wallet/reference input never confirms a booking. Failed payments offer retry/cancel; uncertain or delayed outcomes reconcile the same operation. Polling pauses while hidden and checks on return. Double clicks and lost acknowledgements use one idempotency key.
+
+The confirmation route displays a receipt, an opaque per-booking QR token and Print / Save as PDF. Payment QRs and passes are clearly labeled demonstrations. No money is collected. No guest contact or payment input is persisted in browser storage. After a full reload the mock pass retains its booking but clears the guest name; the production backend must return guestName.
+
+See [payment API contract and mock scenarios](docs/PAYMENT-API-CONTRACT.md). Next: final verification and backend handoff; live provider integration remains optional and depends on backend readiness. The earlier [foundation checklist](docs/PHASE-4-FOUNDATION.md) is historical.
+
+Phase 4 verification: **54 unit/component tests and 28 Playwright browser tests pass**. Lint and production build pass. Pass overflow was checked at 360/390/768/1024/1440px; the screenshot smoke flow reported no page errors. Print media hides navigation/footer, waits for a generated QR before enabling print, and keeps the pass visible. Real device printing and backend/provider integration remain final-handoff checks.
+
+Screenshots (fictitious demo guest): [checkout](docs/screenshots/phase-4-payment.jpg), [desktop pass](docs/screenshots/phase-4-pass.jpg), [mobile pass](docs/screenshots/phase-4-mobile-pass.jpg).

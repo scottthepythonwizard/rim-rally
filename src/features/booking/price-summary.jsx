@@ -15,6 +15,6 @@ export default function PriceSummary({ date, sport, courts, slots, session, onCl
     {hasSelection && <button type="button" onClick={onClear} disabled={disabled} className="mt-4 min-h-11 text-xs underline underline-offset-4 disabled:opacity-40">Cancel hold</button>}
     {stale && <p role="status" className="mt-3 text-xs leading-6">Availability needs refreshing before choosing more hours.</p>}
     {children}
-    <p className="mt-5 border-t border-ink/20 pt-4 text-[11px] leading-6 text-ink/65">Temporary holds expire automatically. No confirmed booking or payment is made in this phase.</p>
+    <p className="mt-5 border-t border-ink/20 pt-4 text-[11px] leading-6 text-ink/65">Temporary holds expire automatically. Continue to checkout before the deadline; confirmation requires a verified service result.</p>
   </aside>;
 }

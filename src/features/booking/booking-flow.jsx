@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { getSchedule } from "@/services/scheduling-service";
+import PaymentStatus from "@/features/checkout/payment-status";
+import { PAYMENT_RECOVERY } from "@/services/payment-operations";
 import DateNavigation from "./date-navigation";
 import BookingMatrix, { SlotLegend } from "./booking-matrix";
 import OpenPlay from "./open-play";
@@ -21,6 +23,19 @@ function requestReducer(state, action) {
 
 export default function BookingFlow({ facility, serverNow }) {
   const params = useSearchParams();
+  const [draftPayment, setDraftPayment] = useState(undefined);
+  const [draftGuest, setDraftGuest] = useState(undefined);
+  const [checkout, setCheckout] = useState(null);
+  const [recoveryReady, setRecoveryReady] = useState(false);
+  useEffect(() => {
+    let active = true;
+    queueMicrotask(() => {
+    if (!active) return;
+    try { const record = JSON.parse(sessionStorage.getItem(PAYMENT_RECOVERY) || "null"); if (record?.credential && record?.key && record?.holdId && record?.method && Number.isSafeInteger(record.amount)) setCheckout({ record }); } catch { /* An invalid recovery record cannot authorize a payment. */ }
+    setRecoveryReady(true);
+    });
+    return () => { active = false; };
+  }, []);
   const [clock, setClock] = useState(Date.parse(serverNow));
   useEffect(() => {
     const start = performance.now();
@@ -30,6 +45,7 @@ export default function BookingFlow({ facility, serverNow }) {
   const today = manilaDate(clock);
   const options = normalizeOptions(params, today);
   function change(changes) {
+    setDraftGuest(undefined); setDraftPayment(undefined);
     const next = { ...options, ...changes };
     if (changes.sport && changes.sport !== options.sport) next.court = `${changes.sport}-1`;
     const query = new URLSearchParams({ sport: next.sport, date: next.date, mode: next.mode, court: next.court });
@@ -37,6 +53,8 @@ export default function BookingFlow({ facility, serverNow }) {
     window.history.pushState(null, "", `?${query}`);
   }
   const scope = `${options.sport}/${options.date}/${options.mode}/${options.scenario}`;
+  if (!recoveryReady) return <p role="status">Checking reservation recovery…</p>;
+  if (checkout) return <PaymentStatus {...checkout} onExit={(result) => { if (result?.cancelled) { setDraftGuest(undefined); setDraftPayment(undefined); } setCheckout(null); }} />;
   return <div>
     <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
       <fieldset><legend className="mb-3 text-[10px] tracking-widest uppercase">Choose your sport</legend><div className="flex gap-2">{facility.sports.map((sport) => <button key={sport} type="button" aria-pressed={options.sport === sport} onClick={() => change({ sport })} className={`min-h-11 rounded-full border border-ink px-6 font-editorial text-xs capitalize ${options.sport === sport ? "bg-ink text-paper" : "hover:bg-tan"}`}>{sport}</button>)}</div></fieldset>
@@ -45,12 +63,12 @@ export default function BookingFlow({ facility, serverNow }) {
     <div role="group" aria-label="Booking type" className="mt-7 flex gap-6 border-b border-ink/15 font-editorial text-sm">{[["court", "Court reservation"], ["open-play", "Open Play"]].map(([mode, name]) => <button type="button" key={mode} aria-pressed={options.mode === mode} onClick={() => change({ mode })} className={`min-h-12 border-b-2 py-3 ${mode === options.mode ? "border-ink font-medium" : "border-transparent text-ink/60 hover:text-ink"}`}>{name}</button>)}</div>
     <div className="mt-7"><DateNavigation date={options.date} today={today} onChange={(date) => change({ date })} /></div>
     <div className="mt-4 flex flex-wrap gap-2"><button onClick={() => change({ date: addDays(today, 1) })} className="min-h-11 rounded-full border border-ink/15 px-4 text-xs hover:bg-tan">Tomorrow</button><p className="flex items-center px-1 text-[11px] text-ink/60">Choose a date, then select a court and time.</p></div>
-    <ScheduleScope key={scope} {...{ facility, options, change }} initialNow={clock} />
+    <ScheduleScope key={scope} {...{ facility, options, change }} initialNow={clock} initialGuest={draftGuest} initialPayment={draftPayment} onCheckout={(record, input) => { setDraftGuest(input.guest); setDraftPayment(input); setCheckout({ record, input }); }} />
     {process.env.NEXT_PUBLIC_API_MODE !== "http" && <details className="mt-10 border-t border-ink/15 pt-5 text-xs"><summary className="min-h-11 cursor-pointer py-3 text-ink/60">Demo availability scenarios</summary><label className="mt-3 flex flex-wrap items-center gap-3">Preview state<select aria-label="Demo scenario" value={options.scenario} onChange={(event) => change({ scenario: event.target.value })} className="min-h-11 rounded-lg border border-ink/20 bg-paper px-4">{[["normal", "Normal availability"], ["sold-out", "Fully booked"], ["empty", "No schedules"], ["error", "Service error"], ["slow", "Slow response"], ["malformed", "Unexpected response"]].map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><p className="mt-3 text-ink/60">Illustrative inventory and prices. These controls affect this preview only.</p></details>}
   </div>;
 }
 
-function ScheduleScope({ facility, options, change, initialNow }) {
+function ScheduleScope({ facility, options, change, initialNow, onCheckout, initialGuest, initialPayment }) {
   const [view, dispatchRequest] = useReducer(requestReducer, { status: "loading", data: null, error: null });
   const [selectionMessage, setSelectionMessage] = useState("");
   const [attempt, setAttempt] = useState(0);
@@ -59,7 +77,7 @@ function ScheduleScope({ facility, options, change, initialNow }) {
   const { sport, date, mode, scenario } = options;
   const holdContext = useMemo(() => ({ facilityId: facility.id, sport, date, mode }), [facility.id, sport, date, mode]);
   const refreshAvailability = useCallback(() => setAttempt((value) => value + 1), []);
-  const flow = useHoldFlow(holdContext, refreshAvailability);
+  const flow = useHoldFlow(holdContext, refreshAvailability, initialGuest);
   const selection = { slots: flow.hold?.slots || [], session: flow.hold?.session || null };
 
   useEffect(() => {
@@ -122,7 +140,7 @@ function ScheduleScope({ facility, options, change, initialNow }) {
       {(flow.status === "uncertain" || (flow.hold && !flow.verified && !flow.busy)) && <button type="button" onClick={() => flow.recover()} className="mb-4 min-h-11 rounded-full border border-ink px-5 text-xs">Retry hold check</button>}
     </div>
     <div className="mt-5 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_290px] xl:grid-cols-[minmax(0,1fr)_310px]">
-      {flow.step === "details" ? <GuestDetails flow={flow} /> : flow.step === "review" ? <GuestReview flow={flow} /> :
+      {flow.step === "details" ? <GuestDetails flow={flow} /> : flow.step === "review" ? <GuestReview flow={flow} onCheckout={onCheckout} initialPayment={initialPayment} /> :
       <section aria-label={mode === "court" ? "Court schedule" : "Open Play sessions"} className="min-w-0">
         <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
           {mode === "court" && courts.length > 0 ? <label className="flex items-center gap-3 text-xs">Court<select aria-label="Choose court" value={courtId} disabled={flow.busy} onChange={async (event) => { const value = event.target.value; if (await flow.cancel()) { setSelectionMessage(""); change({ court: value }); } }} className="min-h-11 max-w-full rounded-lg border border-ink/20 bg-paper px-3">{courts.map((court) => <option key={court.id} value={court.id}>{court.name}</option>)}</select></label> : <p className="font-editorial text-sm">{mode === "open-play" ? "Find your people. Join a session." : "Hourly availability"}</p>}
