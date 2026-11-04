@@ -79,7 +79,7 @@ Reduce animation and gallery enhancements first if time runs short. Preserve boo
 
 ## Current status
 
-Phases 1–4 are implemented with browser mocks. The guest journey includes acknowledged holds, guest details, simulated payments and confirmed demo passes. Production payments and allocation require backend/provider integration.
+Phases 1–5 are implemented and verified with browser mocks. The guest journey includes acknowledged holds, guest details, simulated payments and confirmed demo passes. Production payments and allocation require backend/provider integration.
 
 Next session: final responsive/accessibility review, backend contract agreement, asset handoff and demo rehearsal. Preserve the guest-only scope.
 
@@ -145,3 +145,29 @@ Guest details remain memory-only and survive returning after failure within the 
 Handoff: [payment API contract](PAYMENT-API-CONTRACT.md). The foundation checklist above is historical and superseded by this implementation. Final verification results are recorded in the README after the test run.
 
 Verification: 54 unit/component and 28 browser tests pass; lint/build pass. Desktop/mobile pass screenshots are saved under docs/screenshots/phase-4-*.jpg. No GitHub push or deployment was performed in this session.
+
+## Phase 5 verification and handoff — November 2
+
+Reviewed the guest journey and added axe accessibility coverage for home/facility/scheduling at all five agreed widths, calendar/guest/review/payment/pass screens and protected access errors. Fixed the named hold region, keyboard scrolling while slots are disabled, tablet midnight-note contrast, receipt date/context/resource validation, API court display names and compact print output.
+
+[HANDOFF.md](HANDOFF.md) consolidates setup, contracts, backend responsibilities, demo steps, asset gaps and final acceptance boundaries. [PHASE-5-VERIFICATION.md](PHASE-5-VERIFICATION.md) records findings, checks and limitations. Phase 4 is already pushed to GitHub as 547321a, message `payment section added`. Phase 5 changes are a separate local reviewable milestone.
+
+Next: Phase 6 final buffer and demo rehearsal. Keep image placeholders until the user requests approved assets; no live payment or deployment is implied.
+
+Final Phase 5 verification: 61 unit/component tests and 35 Playwright tests pass, including the axe accessibility scans. Lint and production build pass. Automated coverage uses Chromium; real-device/native-print/provider acceptance remains explicit in HANDOFF.md.
+
+Phase 5 completion: the production-server browser run passed all 35 tests. Added two confirmation-navigation regressions (61 unit/component tests total) and fixed stale receipt/print state. Next session starts with Phase 6; no duplicate Phase 5 implementation is needed.
+
+## Visual rollback — November 3
+
+At the user’s request, reverted the visual polish pass and restored the earlier UI. Phase 5 receipt validation, stale-ticket protection, accessibility fixes and booking features remain intact. The rejected polish screenshots and polish-only tests were removed. Phase 6 has not started.
+
+Rollback checks: lint, 61 unit/component tests and production build pass. The browser run passed 34 cases; the remaining consecutive-hour test was updated to wait for the first acknowledged hold and then passed three repeated runs. No application booking logic was changed for that test correction.
+
+## Phase 6 frontend delivery — November 3
+
+Completed the final production demo rehearsal on the current restored design without application source or styling changes. Lint, 61 unit/component tests, production build, dependency consistency and all 35 production-browser tests pass. The earlier test timing correction is included in this successful complete run.
+
+Final delivery: [FINAL-DELIVERY.md](FINAL-DELIVERY.md). The [delivery manifest](DELIVERY-MANIFEST.json) records and verifies 87 source/asset/test/config files for this local baseline. [HANDOFF.md](HANDOFF.md) contains team responsibilities and demo steps. The restored appearance is frozen; the rejected polish is not reintroduced.
+
+Phases 1–6 are complete for the guest-only mock frontend scope. Real-device/native-print acceptance, live backend/payment integration, and originals for approved assets remain explicit external/deferred items. Use the remaining November 29 buffer for acceptance feedback and defects before November 30. No GitHub push or public deployment was performed; local Phase 5/6 work is not yet published to the remote.

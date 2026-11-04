@@ -42,3 +42,13 @@
   .digital-pass { max-width: 170mm; margin: 0 auto; border-color: black; print-color-adjust: exact; }
   .digital-pass svg { width: 50mm; height: 50mm; }
 }
+
+@media print {
+  nextjs-portal { display: none !important; }
+  main > section { padding: 0 !important; }
+  .digital-pass { padding: 6mm; border-radius: 3mm; }
+  .digital-pass h2 { font-size: 22pt; }
+  .digital-pass dl { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; margin-top: 4mm; padding: 4mm 0; }
+  .digital-pass dd { font-size: 10pt; line-height: 1.4; }
+  .digital-pass > div { margin-top: 4mm; }
+}

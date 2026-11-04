@@ -13,7 +13,7 @@ Prerequisite: Node.js 20.9 or newer (developed with Node 24).
 
 Other commands: `npm run lint`, `npm run build`, and `npm start` (after a build).
 
-## Current milestone: Phase 4 checkout and digital passes
+## Current milestone: Phase 6 frontend demo delivery
 
 - Prototype-based landing page with the user's corrected copy and navigation.
 - Supplied theme colors, local 42dot Sans / Noto Serif, neutral image placeholders.
@@ -76,3 +76,17 @@ See [payment API contract and mock scenarios](docs/PAYMENT-API-CONTRACT.md). Nex
 Phase 4 verification: **54 unit/component tests and 28 Playwright browser tests pass**. Lint and production build pass. Pass overflow was checked at 360/390/768/1024/1440px; the screenshot smoke flow reported no page errors. Print media hides navigation/footer, waits for a generated QR before enabling print, and keeps the pass visible. Real device printing and backend/provider integration remain final-handoff checks.
 
 Screenshots (fictitious demo guest): [checkout](docs/screenshots/phase-4-payment.jpg), [desktop pass](docs/screenshots/phase-4-pass.jpg), [mobile pass](docs/screenshots/phase-4-mobile-pass.jpg).
+
+### Phase 5 verification (November 2)
+
+Added automated accessibility checks across five widths, keyboard-scroll/semantic fixes, stronger confirmed-receipt context/time validation, API-provided court labels and compact mobile print styles. See [verification evidence](docs/PHASE-5-VERIFICATION.md) and the [team handoff / demo guide](docs/HANDOFF.md).
+
+Next milestone is Phase 6: protected buffer, real-device acceptance, demo rehearsal and final delivery. Live payments and provider integration remain backend dependencies.
+
+Final Phase 5 verification: 61 unit/component tests and 35 Playwright tests pass, including the axe accessibility scans. Lint and production build pass. Automated coverage uses Chromium; real-device/native-print/provider acceptance remains explicit in HANDOFF.md.
+
+### Phase 6 delivery (November 3)
+
+The current restored design is frozen for the frontend mock demonstration. See [final delivery checklist](docs/FINAL-DELIVERY.md), [team handoff](docs/HANDOFF.md) and [source fingerprint](docs/DELIVERY-MANIFEST.json). This milestone adds release evidence and production rehearsal without changing the UI. Physical-device/native-print and live-backend/provider acceptance remain explicitly separate. No push or deployment is included.
+
+Phase 6 final verification: 61 unit/component tests and 35 production-browser tests pass; lint, build and dependency consistency pass. The release fingerprint verifies 87 checked files. See docs/FINAL-DELIVERY.md for external acceptance gates.

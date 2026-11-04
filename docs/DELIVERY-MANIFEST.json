@@ -1,0 +1,358 @@
+{
+  "release": "frontend-demo-2026-11-03",
+  "timezone": "Asia/Manila",
+  "scope": "Guest frontend with browser mocks; restored user-approved UI",
+  "gitHead": "547321a9c6ec89016923253cce69cd76752d2db2",
+  "includesUncommittedWork": true,
+  "fingerprint": "43084c649c406d7a067ea4b5324730c473d5b9526c160a77fa36f56092ccec3e",
+  "files": [
+    {
+      "path": ".env.example",
+      "sha256": "83fd5667587f27fb3a59986a36fedb1d3eee55400f44b87c15c77a08070daeca"
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "390b7512221950ff3b02a8bd3d40410ec4b36a285c980007a04e12e40fe61b06"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "063098f6cb31bb44c6f8fbea25b3876de7ee1e5f7d00a50dbab506f6415eb7f0"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "sha256": "96734ee7b4c71de5d1268e33e2dd16b133f10d0356bc3438d1b9418394c71052"
+    },
+    {
+      "path": "jsconfig.json",
+      "sha256": "6bb5d1c07c33f55406b6e760b8d71210ab44a8369904e126a45c530e5fa8dc5f"
+    },
+    {
+      "path": "next.config.mjs",
+      "sha256": "b66ef5e72262a8e1da5c0d96d6dce1ae53a7a1a427d8888fdc1d0d6200c7aa17"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "d4b991f1dffc715dd1ae57d731fbde158fac748087fbc79bd5c2acbdc2047ae1"
+    },
+    {
+      "path": "package.json",
+      "sha256": "f08e3c7c146a3f0f12b3c55f569c92a8379a1e3aba85d7df66cde432b1e598e8"
+    },
+    {
+      "path": "playwright.config.mjs",
+      "sha256": "ee82e0f0427484dd616bdb31b343160b4c82f4cfc3efb7a124c42bed124cb3cb"
+    },
+    {
+      "path": "postcss.config.mjs",
+      "sha256": "b783348d5618047d0f37e12acd15c5a2c5f02809d8711e0764c9cea52750346c"
+    },
+    {
+      "path": "public/file.svg",
+      "sha256": "2b67812c325c199a02536cdbeea0c593a72f707d323b72ee3e08dbab06753bd4"
+    },
+    {
+      "path": "public/fonts/42dot-sans-OFL.txt",
+      "sha256": "1e25d65ef980a81f53feb4fcded827df7edb116f32ffd40b8f4e7250d4d8976b"
+    },
+    {
+      "path": "public/fonts/42dot-sans-bold.ttf",
+      "sha256": "7bfcf3cc65a90e8cd7df993f58e81afe2ece812fa82020eb137834333accb659"
+    },
+    {
+      "path": "public/fonts/42dot-sans-medium.ttf",
+      "sha256": "ab36a1b98b8a646f821cf7efbd55b44e3b37457a428dba9ce07e989ab51c3711"
+    },
+    {
+      "path": "public/fonts/42dot-sans-regular.ttf",
+      "sha256": "c21fba377bca3c1f5dd8ca4aca660473291f8e24847a311b78da2f9cf06f44aa"
+    },
+    {
+      "path": "public/fonts/42dot-sans-semibold.ttf",
+      "sha256": "3a84b9097197ec1921e743a0871a1f35a489e63baa2f453005dbcf70c29bd86a"
+    },
+    {
+      "path": "public/fonts/noto-serif-OFL.txt",
+      "sha256": "cee9892f9f0cc8fe882c9e9537ee6a89621d86ee7ceaf70b02e2b2b1c25c061a"
+    },
+    {
+      "path": "public/fonts/noto-serif-medium.ttf",
+      "sha256": "4ac293744360aaf983c105398e3fb4b5bfe03c784689c3c4f5c0071dce73e8df"
+    },
+    {
+      "path": "public/fonts/noto-serif-regular.ttf",
+      "sha256": "5473d2e43bdd018ee124a4addba8091fd0a29894b121cbb741023af6549662b6"
+    },
+    {
+      "path": "public/globe.svg",
+      "sha256": "b614b9bf183925957661ac851498fe1d8029fd43a62fbfed86f9e2624a57e7cf"
+    },
+    {
+      "path": "public/images/basketball.jpg",
+      "sha256": "b82c6dc5f63b7b99b8d17026afa62d3eb0de2806ff2e83f2cc9ab4c44cce0f92"
+    },
+    {
+      "path": "public/images/pickleball.jpg",
+      "sha256": "01d5593579dd19196024e3d3e4fb4536943be3cc916cb74f404429fd7db6fda2"
+    },
+    {
+      "path": "public/images/placeholder.svg",
+      "sha256": "0b20d3499d1a0376057ff8cd3d98b8cbc116c4ca1c3973e6e26959c01df793c7"
+    },
+    {
+      "path": "public/next.svg",
+      "sha256": "55995dfad6ecb4945a1e856ddca03c5e16aa5bf13fd21b4df6a74ae79357bcfc"
+    },
+    {
+      "path": "public/vercel.svg",
+      "sha256": "f081337b2fee635b455b63275406a3e7f39d6a014e25ad90dab5a67e62a12ac4"
+    },
+    {
+      "path": "public/window.svg",
+      "sha256": "644768c4aaeb4767bce293344eeb0c125fb804a94d801440424072202d85e3a1"
+    },
+    {
+      "path": "src/app/book/[facilityId]/loading.jsx",
+      "sha256": "7aec3aed7a108890726cb844b4c6d2ab2571cb2ce84381007879ccd0e7ae6d97"
+    },
+    {
+      "path": "src/app/book/[facilityId]/page.jsx",
+      "sha256": "ae1887cbd137fc6d1009e7e19717b1f1e005c61e6e1173a34334fc87c52ef046"
+    },
+    {
+      "path": "src/app/booking/[bookingId]/confirmation/error.jsx",
+      "sha256": "80acf985297616cb3f861df979ea328716c6500b702d141832484b53b2090ed7"
+    },
+    {
+      "path": "src/app/booking/[bookingId]/confirmation/loading.jsx",
+      "sha256": "98b453756a94d1fa84696b5c43afd771f6f9757f8ee4a18590d8a509c4278eda"
+    },
+    {
+      "path": "src/app/booking/[bookingId]/confirmation/page.jsx",
+      "sha256": "954bed2373d82afc6f35bc41ed7a1c2b64d18988d3e68223dabe49b15ba3a42a"
+    },
+    {
+      "path": "src/app/error.jsx",
+      "sha256": "4192bd24d00fffa761e96aca23f7c230157f5b7f6122a6afbe6a92bfa94a3865"
+    },
+    {
+      "path": "src/app/facilities/[facilityId]/page.jsx",
+      "sha256": "ff9575909f7ea1ec42d0057403cdef1f45ea3bcba73edc7056c5e427c9186995"
+    },
+    {
+      "path": "src/app/globals.css",
+      "sha256": "41a6786fc10de99abfeb854dff581feb3e24c35a19df344e11bc7e9934381973"
+    },
+    {
+      "path": "src/app/layout.jsx",
+      "sha256": "3c546336b66e58abe71a399474257d5deac3f20291d43ef166c7b34d1938f8f4"
+    },
+    {
+      "path": "src/app/loading.jsx",
+      "sha256": "a3b850af08dfc12350e7ea55479dd67bb9fd26cdf2db83ef85f427b6750bcc5d"
+    },
+    {
+      "path": "src/app/not-found.jsx",
+      "sha256": "39203f91639f88cb8a92789f7a2a8ef118dc47b892257411bbd01b71cb1e7ea1"
+    },
+    {
+      "path": "src/app/page.jsx",
+      "sha256": "5de2c5df265dda84d49f3f15786d14c0095005219990abc9ca1e420e40501203"
+    },
+    {
+      "path": "src/components/brand.jsx",
+      "sha256": "82437986484d022f50788d3b225f98198ec1b407e28fd063370bfc4a0816181c"
+    },
+    {
+      "path": "src/components/landing.jsx",
+      "sha256": "838e2f0108bcf940c18ba32a19863f9120f5f6ef4abc60abca555d6c192ca3ef"
+    },
+    {
+      "path": "src/components/mobile-menu.jsx",
+      "sha256": "faeed0489fb6d662752bc297e88a27fa9030d66eb27309d69b317ef390d40cd2"
+    },
+    {
+      "path": "src/components/notice-button.jsx",
+      "sha256": "a8b6ea1a087e669021212c5060811c61781a5e0fb8450a1509f91694f06595bd"
+    },
+    {
+      "path": "src/components/site-footer.jsx",
+      "sha256": "575d616a78409d14ed3dfd0bb0a6f511a0c26c92fb353013ab0ad62d65bee0a2"
+    },
+    {
+      "path": "src/components/site-header.jsx",
+      "sha256": "0267559a6b71099522f24786598a614e1964840add4d645a94c9d85b3945a85a"
+    },
+    {
+      "path": "src/components/ui.jsx",
+      "sha256": "507e1bf611714f5abed54eeb0c098418b4ec9966026b63191d914c8374a044a6"
+    },
+    {
+      "path": "src/features/booking/booking-flow.jsx",
+      "sha256": "188c3f9fd43c097508fff626f21003a8038c08209e33554e7fdb6a69156077bb"
+    },
+    {
+      "path": "src/features/booking/booking-matrix.jsx",
+      "sha256": "fb2e01f363e94ae0867dfe164742f3aa8783ee820c1cd68392c7a7c84465963c"
+    },
+    {
+      "path": "src/features/booking/date-navigation.jsx",
+      "sha256": "79cd59b01f721e7cbd668fdfa4ad5f84d63ea0b9194ca59e53f4d24615cd3ad3"
+    },
+    {
+      "path": "src/features/booking/guest-details.jsx",
+      "sha256": "adf5e7bb75ffdca6a00a0c532e1d70b92283cd494c49d536efc7f6fdb3f932d0"
+    },
+    {
+      "path": "src/features/booking/hold-countdown.jsx",
+      "sha256": "e0c7afb8f06e5bbc6b61a3fb55f2c8c9c8c73acf4e193e2e53c369f36559870b"
+    },
+    {
+      "path": "src/features/booking/hold-state.js",
+      "sha256": "b44cfc257c185a3b71cba2a86d0c50d284939558568c4a78477a2c60dfd125cb"
+    },
+    {
+      "path": "src/features/booking/open-play.jsx",
+      "sha256": "2b38c93f57636d906c7da651870e55182c352fa615919a9a36417d080758261d"
+    },
+    {
+      "path": "src/features/booking/price-summary.jsx",
+      "sha256": "67e1c88563bbb1574ac2079c8bcf4702d6d92bc88d57f4bb47c0a7152b1d52db"
+    },
+    {
+      "path": "src/features/booking/scheduling.js",
+      "sha256": "59f62544cfcd319c04cce046498219921a318fb7b4f6cc88b9eb7e5667d5c7ff"
+    },
+    {
+      "path": "src/features/booking/use-hold-flow.js",
+      "sha256": "02e6a451af1db31fc9631017b741dd57997fb9993844554fe32ff82cfc4fb83d"
+    },
+    {
+      "path": "src/features/checkout/confirmation.jsx",
+      "sha256": "0c9f059126ec8fa77be3e377a147b2dd910d26f6bbe9fe6243c749b967097d02"
+    },
+    {
+      "path": "src/features/checkout/payment-contract.js",
+      "sha256": "815c385cc33131362b95b4716ffad03395449f5dc7702de76992c7a9930bd57f"
+    },
+    {
+      "path": "src/features/checkout/payment-methods.jsx",
+      "sha256": "390ae0adc967b0fdd2882ee40bcfd11501802369de6e9bb6dfab2abf814f399e"
+    },
+    {
+      "path": "src/features/checkout/payment-status.jsx",
+      "sha256": "7c83b5aad269a4a1a65d8e28229dc4b0e54eaa37c2744309c2cc4ce807d332ea"
+    },
+    {
+      "path": "src/features/checkout/ticket-qr.jsx",
+      "sha256": "fbc25b16be3679a0515516a6c4fa048768b453ff4ee6f4cdc87ea75bd4073be1"
+    },
+    {
+      "path": "src/mocks/fixtures.js",
+      "sha256": "4e5ed6fb4a7d5adcabea9e9ed8c18b35dc8a43a1445cf4a5afe0470ddd1f5074"
+    },
+    {
+      "path": "src/mocks/hold-engine.js",
+      "sha256": "5a3b6054dc9d398b248f955d2167329cacb4af4e11b5286b739db03516141702"
+    },
+    {
+      "path": "src/mocks/payment-engine.js",
+      "sha256": "1a9d7c77d3c9b13127f7cdd3c336d7e9f61001f7633368cfede74b49702349e3"
+    },
+    {
+      "path": "src/mocks/payments.js",
+      "sha256": "4d3f280272f19658a4c35d6d669f733b8f52ea6e88d0c0f1e5b19c903334c242"
+    },
+    {
+      "path": "src/mocks/scheduling.js",
+      "sha256": "11706009e181b2a76116014e58b3a3923e6d86b6a8714b177e0d810dc9f70877"
+    },
+    {
+      "path": "src/services/api-client.js",
+      "sha256": "490a0501410c9ef46cdfdae8f43c71074485ea0b35d56c4945780ddec1682158"
+    },
+    {
+      "path": "src/services/facility-service.js",
+      "sha256": "85ea9f3076a21972247c8de43a8e692256ac7978cfa59dfce611ed745c9c20b9"
+    },
+    {
+      "path": "src/services/hold-service.js",
+      "sha256": "bb331f2389e52d1ac46d765b4fb2a1aca802d1bc523bb8d8136954c618ebd894"
+    },
+    {
+      "path": "src/services/payment-operations.js",
+      "sha256": "efaca4c85a97327d1cb2c7167976bf17429480ba964ab5e67fcf4e22886c47ee"
+    },
+    {
+      "path": "src/services/payment-service.js",
+      "sha256": "2deaf59da905aa40351431108e483a15e890e60d3be3962883d54572731ac419"
+    },
+    {
+      "path": "src/services/scheduling-service.js",
+      "sha256": "6668837f2e9e496f402fbc3a6127122df60a43a6bf56ac113023612442ff7ebc"
+    },
+    {
+      "path": "tests/booking-contract.test.js",
+      "sha256": "02ad48b54f23a86ba6ea2d86b379233d1ea4c6a46af46e4f85f3a4d6777c52f4"
+    },
+    {
+      "path": "tests/booking-ui.test.jsx",
+      "sha256": "2fb2c186fdf03eea02b7afaeb736a5035c2f23e55ccb0c85ca18278af1a70f0d"
+    },
+    {
+      "path": "tests/confirmation.test.jsx",
+      "sha256": "3029fe477cbee5f23093a87dd72677ccf74f813bac30e4303ac38e46141cedc0"
+    },
+    {
+      "path": "tests/e2e/booking.spec.js",
+      "sha256": "319d71a9b64e2fe9fa0198315af4c93ada0c80457674b804d1a0672ed159b5be"
+    },
+    {
+      "path": "tests/e2e/checkout.spec.js",
+      "sha256": "59b3650b7b507886dea9ccb93345a7aa4ad6eed4c7b3083b52ce5b9d96878f87"
+    },
+    {
+      "path": "tests/e2e/holds.spec.js",
+      "sha256": "ba3bde12433a46c3dec4d8d183cc41d5f8656e5ef8d056fd5368d8c097c41087"
+    },
+    {
+      "path": "tests/e2e/payment-foundation.spec.js",
+      "sha256": "be9f944b1ec92cc4b36ef67022d49fd17381599ac1931a73cd46f55e30693f9f"
+    },
+    {
+      "path": "tests/e2e/verification.spec.js",
+      "sha256": "57c654bea77560dbddcf3e44af003d115af8c5c160764ed50974d462245e28d3"
+    },
+    {
+      "path": "tests/holds.test.js",
+      "sha256": "cfd10b77107618a72d53872e69167b1212ca975b6328efe5be4fd84960a66283"
+    },
+    {
+      "path": "tests/payment-engine.test.js",
+      "sha256": "3eca872b3fb74ac04c22cb5102d6920df20d9eed763d45fa1d4d247ce1c4a2a1"
+    },
+    {
+      "path": "tests/payment-methods.test.jsx",
+      "sha256": "6e66a0b5bacb60571254c3114aef4b92e3eacaec9255fe7affdc119906b5a200"
+    },
+    {
+      "path": "tests/payments.test.js",
+      "sha256": "be59e117138204ec15818aa664cdf4525255766334d2d2ffbd7b9a2807783dd6"
+    },
+    {
+      "path": "tests/scheduling.test.js",
+      "sha256": "97bea8bd475e294d91f8b336cc0ca7e42e7d2769885a442a250f9832910755dd"
+    },
+    {
+      "path": "tests/services.test.js",
+      "sha256": "77ca7baf9501bbb039a2b2a8b5394f4ecf1399b935d775dc9fc3750689dfab00"
+    },
+    {
+      "path": "tests/setup.js",
+      "sha256": "475c7500129ce15530c7b8070b2838a840f96ac75ce83a0a413ef66ae24b5d64"
+    },
+    {
+      "path": "vitest.config.mjs",
+      "sha256": "aaa4d2682039f730d4dd20927e4ac7e092010eed7f078fa6f258d958dc91715c"
+    }
+  ]
+}

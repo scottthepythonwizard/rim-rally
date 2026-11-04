@@ -62,7 +62,7 @@ export function paymentEngine({ lock, getStore, save, authorize, ensureActive, s
         const { h } = await locate(db, p?.id, credential);
         if (!p || p.status !== "succeeded" || !h.booked) throw new ApiError("NOT_FOUND", "This booking is not confirmed.");
         const hold = snapshot(h);
-        return { id, holdId: h.id, status: "confirmed", reference: `RR-${id.slice(0, 8).toUpperCase()}`, facilityName: "Rim & Rally Sports Hub", context: hold.context, slots: hold.slots, session: hold.session, amount: p.amount, currency: "PHP", method: p.method, ticketToken: p.ticketToken };
+        return { id, holdId: h.id, status: "confirmed", reference: `RR-${id.slice(0, 8).toUpperCase()}`, facilityName: "Rim & Rally Sports Hub", courtName: hold.session?.courtName || (hold.context.sport === "basketball" ? "Half-court 1" : `Court ${hold.slots[0].courtId.split("-").at(-1)}`), context: hold.context, slots: hold.slots, session: hold.session, amount: p.amount, currency: "PHP", method: p.method, ticketToken: p.ticketToken };
       });
     },
   };

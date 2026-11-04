@@ -5,6 +5,8 @@ test("selects consecutive hours, changes court, and clears on date change", asyn
   await expect(page.getByRole("table")).toBeVisible();
   const first = page.getByTestId("slot-2030-01-01_pickleball-1_8").filter({ visible: true });
   await first.click();
+  await expect(first).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByLabel("Selection total", { exact: true })).toContainText("400");
   await page.getByTestId("slot-2030-01-01_pickleball-1_9").filter({ visible: true }).click();
   await expect(page.getByLabel("Selection total", { exact: true })).toContainText("800");
   await page.getByTestId("slot-2030-01-01_pickleball-1_12").filter({ visible: true }).click();

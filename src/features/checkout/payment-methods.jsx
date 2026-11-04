@@ -31,7 +31,7 @@ export default function PaymentMethods({ holdValid, flow, onCheckout, initialPay
     try {
       const verified = await flow.recover();
       if (!verified) { setError("Your hold must be verified before payment."); return; }
-      const record = { key: crypto.randomUUID(), credential: flow.credential, holdId: verified.id, amount: verified.quote.totalAmount, method: selected, started: Date.now() };
+      const record = { key: crypto.randomUUID(), credential: flow.credential, holdId: verified.id, context: verified.context, amount: verified.quote.totalAmount, method: selected, started: Date.now() };
       sessionStorage.setItem("rim-rally:payment-recovery:v1", JSON.stringify(record));
       dialog.current.close();
       onCheckout(record, { holdId: record.holdId, holdRevision: verified.revision, expectedAmount: record.amount, method: selected, guest: { ...flow.guest }, ...(selected === "qrph" ? { reference } : { mobile: normalizeMobile(mobile) }), ...(demo ? { scenario } : {}) });

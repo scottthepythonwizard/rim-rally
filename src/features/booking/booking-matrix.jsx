@@ -31,14 +31,14 @@ export default function BookingMatrix({ courts, courtId, slots, now, blocked, on
   const selectedCourt = courts.find((court) => court.id === courtId) || courts[0];
   if (!courts.length) return null;
   return <>
-    <div className="hidden max-h-[710px] overflow-auto rounded-xl border border-ink/15 md:block">
+    <div tabIndex={0} role="region" aria-label="Scrollable hourly court schedule" className="hidden max-h-[710px] overflow-auto rounded-xl border border-ink/15 md:block">
       <table className="w-full table-fixed border-collapse text-xs">
         <caption className="sr-only">Hourly court availability, 8 AM to midnight. Prices per hour. All times in Asia/Manila.</caption>
         <thead className="sticky top-0 z-10 bg-paper"><tr><th scope="col" className="w-32 border-b border-ink/15 px-3 py-5 text-left">Time</th>{courts.map((court) => <th key={court.id} scope="col" className={`border-b border-ink/15 p-3 text-center font-medium ${court.id === courtId ? "bg-tan/50" : ""}`}>{court.name}</th>)}</tr></thead>
         <tbody>{courts[0].slots.map((row, position) => <MatrixRow key={row.id} {...{ row, position, courts, courtId, selectedIds, now, blocked, onSelect }} />)}</tbody>
       </table>
     </div>
-    <div className="overflow-hidden rounded-xl border border-ink/15 md:hidden" aria-label={`${selectedCourt.name} hourly availability`}>
+    <div className="overflow-hidden rounded-xl border border-ink/15 md:hidden" role="region" aria-label={`${selectedCourt.name} hourly availability`}>
       {selectedCourt.slots.map((slot, position) => <div key={slot.id}>
         {[0, 4, 10].includes(position) && <h3 className="bg-ink/5 px-4 py-2 text-[10px] tracking-widest uppercase">{position === 0 ? "Morning" : position === 4 ? "Afternoon" : "Evening"}</h3>}
         <div className="grid grid-cols-[1fr_115px] items-center gap-3 border-t border-ink/10 p-3"><div><p className="text-xs font-medium">{formatTime(slot.startAt)} – {formatTime(slot.endAt)}</p><div className="mt-2 flex flex-wrap items-center gap-2"><span className="text-xs">{money(slot.amount)}</span><PriceBadge band={slot.priceBand} /></div>{position === 15 && <p className="mt-1 text-[9px] text-ink/60">Ends next day</p>}</div><SlotButton {...{ slot, selected: selectedIds.has(slot.id), now, blocked, onSelect }} courtName={selectedCourt.name} /></div>
@@ -49,5 +49,5 @@ export default function BookingMatrix({ courts, courtId, slots, now, blocked, on
 
 function MatrixRow({ row, position, courts, courtId, selectedIds, now, blocked, onSelect }) {
   const priceSlot = (courts.find((court) => court.id === courtId) || courts[0]).slots[position];
-  return <><PeriodLabel position={position} columns={courts.length + 1} /><tr className="border-t border-ink/10"><th scope="row" className="px-3 py-3 text-left font-normal"><span className="block text-[11px]">{formatTime(row.startAt)}<span className="mx-1">–</span>{formatTime(row.endAt)}</span><span className="my-1.5 block text-xs font-medium">{money(priceSlot.amount)}</span><PriceBadge band={priceSlot.priceBand} />{position === 15 && <span className="mt-1 block text-[9px] text-ink/55">Ends next day</span>}</th>{courts.map((court) => { const slot = court.slots[position]; return <td key={court.id} className="border-l border-ink/10 p-1.5"><SlotButton {...{ slot, selected: selectedIds.has(slot.id), now, blocked, onSelect }} courtName={court.name} /></td>; })}</tr></>;
+  return <><PeriodLabel position={position} columns={courts.length + 1} /><tr className="border-t border-ink/10"><th scope="row" className="px-3 py-3 text-left font-normal"><span className="block text-[11px]">{formatTime(row.startAt)}<span className="mx-1">–</span>{formatTime(row.endAt)}</span><span className="my-1.5 block text-xs font-medium">{money(priceSlot.amount)}</span><PriceBadge band={priceSlot.priceBand} />{position === 15 && <span className="mt-1 block text-[9px] text-ink/70">Ends next day</span>}</th>{courts.map((court) => { const slot = court.slots[position]; return <td key={court.id} className="border-l border-ink/10 p-1.5"><SlotButton {...{ slot, selected: selectedIds.has(slot.id), now, blocked, onSelect }} courtName={court.name} /></td>; })}</tr></>;
 }

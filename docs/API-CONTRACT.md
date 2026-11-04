@@ -49,4 +49,4 @@ Demo data includes three pickleball courts and one basketball half-court, availa
 
 Simulated latency is 250ms or 2400ms for `slow`. `error` persists until changing scenario (a retry does not secretly change server conditions). `malformed` proves validation fallback. `empty` publishes no schedules. `sold-out` returns booked courts/full sessions.
 
-Phase 3 adds temporary holds and guest details through separate services; see HOLD-API-CONTRACT.md for mutations, ownership fields, credentials and recovery. Checkout, payments, passes and real cross-user locking remain future/backend work.
+Phase 3 adds temporary holds and guest details through separate services; see HOLD-API-CONTRACT.md for mutations, ownership fields, credentials and recovery. Phase 4 implements simulated checkout, payment recovery and passes; see PAYMENT-API-CONTRACT.md. Real cross-user locking and money processing require backend/provider integration.

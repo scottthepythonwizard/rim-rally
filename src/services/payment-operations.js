@@ -23,11 +23,21 @@ export async function cancelFailedPayment(record) {
   return validatePaymentAttempt(await getBrowserHoldEngine().cancelPayment(record.id || record.key, record));
 }
 export function validateBooking(b, id, expected = {}) {
+  const invalid = () => new ApiError("INVALID_BOOKING", "The confirmed pass could not be verified. Check again before printing.");
+  const text = (v) => typeof v === "string" && v.trim().length > 0;
   const time = (v) => typeof v === "string" && /(?:Z|[+-]\d{2}:\d{2})$/.test(v) && Number.isFinite(Date.parse(v));
-  const slots = b?.slots;
-  const selection = b?.context?.mode === "court" ? Array.isArray(slots) && slots.length > 0 && slots.every((s, i) => s && typeof s.courtId === "string" && s.courtId === slots[0].courtId && time(s.startAt) && time(s.endAt) && Date.parse(s.endAt) - Date.parse(s.startAt) === 3600000 && Date.parse(s.startAt) >= Date.parse(atHour(b.context.date, 8)) && Date.parse(s.endAt) <= Date.parse(atHour(b.context.date, 24)) && (!i || Date.parse(s.startAt) === Date.parse(slots[i - 1].endAt))) : b?.context?.mode === "open-play" && b.session && typeof b.session.name === "string" && typeof b.session.courtName === "string" && time(b.session.startAt) && time(b.session.endAt) && Date.parse(b.session.endAt) > Date.parse(b.session.startAt);
-  if (!b || b.id !== id || b.status !== "confirmed" || typeof b.holdId !== "string" || !["pickleball", "basketball"].includes(b.context?.sport) || !validDate(b.context?.date) || !selection || typeof b.facilityName !== "string" || typeof b.reference !== "string" || !b.reference || typeof b.ticketToken !== "string" || !b.ticketToken || b.ticketToken.length > 2000 || !Number.isSafeInteger(b.amount) || b.amount <= 0 || b.currency !== "PHP" || !["gcash", "maya", "qrph"].includes(b.method)) throw new ApiError("INVALID_BOOKING", "The confirmed pass could not be verified. Check again before printing.");
-  for (const key of ["holdId", "amount", "method"]) if (expected[key] !== undefined && b[key] !== expected[key]) throw new ApiError("BOOKING_MISMATCH", "The pass did not match this payment. Check its status again.");
+  const context = b?.context;
+  if (!context || !text(context.facilityId) || !["pickleball", "basketball"].includes(context.sport) || !validDate(context.date) || !["court", "open-play"].includes(context.mode)) throw invalid();
+  const dayStart = Date.parse(atHour(context.date, 8)), dayEnd = Date.parse(atHour(context.date, 24));
+  const inWindow = (start, end) => time(start) && time(end) && Date.parse(start) >= dayStart && Date.parse(end) <= dayEnd && Date.parse(end) > Date.parse(start);
+  const slots = b.slots;
+  const selection = context.mode === "court"
+    ? b.session == null && text(b.courtName) && Array.isArray(slots) && slots.length > 0 && slots.length <= 16 && slots.every((s, i) => s && text(s.courtId) && s.courtId === slots[0].courtId && inWindow(s.startAt, s.endAt) && Date.parse(s.endAt) - Date.parse(s.startAt) === 3600000 && (!i || Date.parse(s.startAt) === Date.parse(slots[i - 1].endAt)))
+    : Array.isArray(slots) && slots.length === 0 && b.session && text(b.session.name) && text(b.session.courtName) && inWindow(b.session.startAt, b.session.endAt);
+  if (b.id !== id || b.status !== "confirmed" || !text(b.holdId) || !selection || !text(b.facilityName) || !text(b.reference) || !text(b.ticketToken) || b.ticketToken.length > 2000 || !Number.isSafeInteger(b.amount) || b.amount <= 0 || b.currency !== "PHP" || !["gcash", "maya", "qrph"].includes(b.method)) throw invalid();
+  const mismatch = () => new ApiError("BOOKING_MISMATCH", "The pass did not match this payment. Check its status again.");
+  for (const key of ["holdId", "amount", "method"]) if (expected[key] !== undefined && b[key] !== expected[key]) throw mismatch();
+  for (const key of ["facilityId", "sport", "date", "mode"]) if (expected.context?.[key] !== undefined && context[key] !== expected.context[key]) throw mismatch();
   return b;
 }
 export async function getBooking(id, credential, expected) {

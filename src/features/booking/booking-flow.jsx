@@ -134,7 +134,7 @@ function ScheduleScope({ facility, options, change, initialNow, onCheckout, init
   const amount = selection.session ? selection.session.amount : totalAmount(selection.slots);
   const selectedCount = selection.slots.length || (selection.session ? 1 : 0);
   return <>
-    <div className="sticky top-0 z-20 mt-5 bg-paper pt-2" aria-label="Hold status">
+    <div className="sticky top-0 z-20 mt-5 bg-paper pt-2" role="region" aria-label="Hold status">
       {(flow.hold || flow.busy) && <HoldCountdown remaining={flow.remaining} status={flow.status} hasHold={Boolean(flow.hold)} verified={flow.verified} />}
       {flow.message && <p role={/recovered|cancelled/.test(flow.message) ? "status" : "alert"} className="mb-4 rounded-lg border border-ink/25 bg-tan/50 px-4 py-3 text-xs leading-6">{flow.message}</p>}
       {(flow.status === "uncertain" || (flow.hold && !flow.verified && !flow.busy)) && <button type="button" onClick={() => flow.recover()} className="mb-4 min-h-11 rounded-full border border-ink px-5 text-xs">Retry hold check</button>}

@@ -21,4 +21,4 @@ The SVG brand mark is a geometric approximation, not the original supplied logo 
 
 ## Content requiring confirmation
 
-Actual facility address, contact channels, amenities, image rights for final assets, membership copy and pricing. Membership amounts are screenshot-based prototype content, explicitly labeled. No membership sale, subscription, live reservation, or payment occurs in this build.
+Contact channels, amenities, image rights for final assets, and Open Play prices/capacities still need confirmation. The user supplied Carlos Trinidad Ave, Salitran IV, Dasmariñas, Philippines; the corrected membership copy/amounts; one basketball half-court; and PHP 400 per court-hour for both sports. Membership remains explicitly labeled prototype content. No membership sale, subscription, live reservation, or payment occurs in this build.

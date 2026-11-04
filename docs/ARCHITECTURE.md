@@ -12,11 +12,12 @@ Phase 2 implements REST availability and Open Play reads through one HTTP client
 - GET /facilities/:id: facility, image assets, amenities, courts, hours.
 - GET /availability?facilityId=&sport=&date=: serverNow, courtId, slot IDs, start/end timestamps, status, pricing band, integer-centavo amounts.
 - GET /open-play?facilityId=&sport=&date=: sessions, registered count, capacity, price.
-- POST /holds: slot IDs or one session ID; returns ID, expiry, server time, acknowledged selection, itemized quote, opaque recovery credential.
+- POST /holds: slot IDs or one session ID; returns ID, expiry, server time, acknowledged selection, itemized quote; X-Guest-Recovery carries the client-generated credential under the proposed contract.
 - PATCH /holds/:id: atomic replacement without extending expiry.
 - GET /holds/:id and DELETE /holds/:id: revalidate / release.
 - POST /payment-attempts: hold, guest, method, applicable inputs, idempotency key.
 - GET /payment-attempts/:id: pending/succeeded/failed/cancelled, confirmed booking ID when ready.
+- GET /payment-attempts/by-key/:idempotencyKey: reconcile an attempt when its creation acknowledgement was lost.
 - GET /bookings/:id: confirmed receipt and opaque ticket token.
 
 IDs alone do not authorize guest access. The API must define credential transport before live integration. No secrets belong in NEXT_PUBLIC variables.

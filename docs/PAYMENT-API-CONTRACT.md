@@ -49,7 +49,7 @@ Missing/unknown records must have explicit semantics: a timeout or ordinary 404 
 
 ### GET /bookings/:id
 
-Require the recovery credential; IDs alone are not authorization. Return id, holdId, status=confirmed, reference, guestName, facilityName, context={facilityId,sport,date,mode}, slots or session, amount, currency=PHP, method and ticketToken. Slots have courtId/startAt/endAt; sessions have name/courtName/startAt/endAt. Amount/hold/method must match the original payment. The opaque token must contain no guest PII and requires backend check-in verification to be valid in production.
+Require the recovery credential; IDs alone are not authorization. Return id, holdId, status=confirmed, reference, guestName, facilityName, context={facilityId,sport,date,mode}, courtName (required for private booking), slots or session, amount, currency=PHP, method and ticketToken. Slots have courtId/startAt/endAt; sessions have name/courtName/startAt/endAt. Amount/hold/method must match the original payment. The opaque token must contain no guest PII and requires backend check-in verification to be valid in production.
 
 ### Cancellation policy
 
@@ -80,3 +80,5 @@ Next milestone: final accessibility/visual review, backend contract agreement an
 - Background tabs suspend timers and device clocks change. Hold validity uses revalidation plus monotonic elapsed time; payment reconciliation uses service status on return. The two-minute delayed-message threshold is approximate across reload/device-clock changes and never authorizes a charge or confirms a booking. The mock shares the browser clock; independent production timing requires the backend.
 - Unexpected errors, delayed writes and mismatched payloads can make a result uncertain. The UI preserves the opaque operation, blocks another payment, validates the result and checks the original operation. The by-key lookup, expiry handoff, successful-allocation timing and cancellation rules require backend/provider agreement and real integration testing.
 - Browser mocks cannot prove production cross-user allocation, provider success or ticket validity. Mobile print/PDF behavior also varies by browser; verify target devices during final handoff.
+
+Phase 5 validation additionally binds new recovery records to facility/sport/date/mode. Receipt courtName is an explicit API display label; the UI must not derive names from opaque court IDs. All receipt times must lie within the selected Manila date’s 08:00–next-day 00:00 window.
