@@ -1,10 +1,12 @@
 # Rim & Rally
 
-Presentation-tier prototype built with Next.js App Router, Tailwind CSS, and JavaScript. No backend, database, or payment processing is implemented.
+Court booking prototype built with Next.js App Router and Tailwind CSS. Guest scheduling and checkout use mocks. Staff accounts and schedules use SQLite.
+
+For the Django entry point, see [Run Rim & Rally through Django](docs/DJANGO.md).
 
 ## Run locally
 
-Prerequisite: Node.js 20.9 or newer (developed with Node 24).
+Prerequisite: Node.js 24. The staff dashboard uses Node’s built-in SQLite module.
 
 1. Run `npm ci`.
 2. Run `npm run dev`.
@@ -90,3 +92,7 @@ Final Phase 5 verification: 61 unit/component tests and 35 Playwright tests pass
 The current restored design is frozen for the frontend mock demonstration. See [final delivery checklist](docs/FINAL-DELIVERY.md), [team handoff](docs/HANDOFF.md) and [source fingerprint](docs/DELIVERY-MANIFEST.json). This milestone adds release evidence and production rehearsal without changing the UI. Physical-device/native-print and live-backend/provider acceptance remain explicitly separate. No push or deployment is included.
 
 Phase 6 final verification: 61 unit/component tests and 35 production-browser tests pass; lint, build and dependency consistency pass. The release fingerprint verifies 87 checked files. See docs/FINAL-DELIVERY.md for external acceptance gates.
+
+For a beginner-friendly file-by-file walkthrough and backend integration explanation, see [Frontend team guide](docs/FRONTEND-TEAM-GUIDE.md).
+
+See [Staff and admin access](docs/STAFF-ACCESS.md) for first-admin setup, hosting configuration, and dashboard verification.

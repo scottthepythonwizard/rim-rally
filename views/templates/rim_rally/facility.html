@@ -1,0 +1,23 @@
+{% extends 'rim_rally/base.html' %}
+{% load static %}
+{% block title %}Explore the hub | Rim &amp; Rally{% endblock %}
+{% block content %}
+  <section class="bg-tan px-6 py-16 md:px-12">
+    <div class="mx-auto grid max-w-6xl items-center gap-10 md:grid-cols-2">
+      <div>
+        <p class="{{ eyebrow }}">One hub. Two ways to play.</p>
+        <h1 class="mt-5 text-5xl leading-none font-bold tracking-tight">{{ facility.name }}</h1>
+        <p class="mt-6 text-sm leading-7">A place for your next rally, friendly match, or half-court run. {{ facility.hours }}.</p>
+        <ul aria-label="Illustrative facility amenities" class="mt-6 flex flex-wrap gap-2">
+          {% for amenity in facility.amenities %}
+            <li class="rounded-full border border-ink/30 px-4 py-2 text-xs">{{ amenity }}</li>
+          {% endfor %}
+        </ul>
+        <a href="{{ book_url }}" class="{{ button }} {{ primary }} mt-8">Choose your sport →</a>
+        <p class="mt-5 text-xs leading-6">Demo facility information. Final address and amenities require confirmation.</p>
+      </div>
+      <img src="{% static 'images/placeholder.svg' %}" width="1000" height="1000" alt="Facility image placeholder" class="aspect-square w-full rounded-tl-[90px] object-cover">
+    </div>
+  </section>
+  {% include 'rim_rally/courts.html' %}
+{% endblock %}

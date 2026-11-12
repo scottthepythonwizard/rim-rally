@@ -6,3 +6,8 @@ out/
 playwright-report/
 test-results/
 *.log
+
+.rim-rally/
+.venv/
+__pycache__/
+rim_rally/static/rim_rally/site.css

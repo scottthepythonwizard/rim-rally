@@ -18,16 +18,37 @@
 
 @layer base {
   html { scroll-behavior: smooth; scroll-padding-top: 6rem; }
+  html, body { overscroll-behavior: none; }
   body { background: var(--color-paper); color: var(--color-ink); font-family: var(--font-sans); }
   button, a, input { -webkit-tap-highlight-color: transparent; }
   button:not(:disabled), summary { cursor: pointer; }
   :focus-visible { outline: 2px solid currentColor; outline-offset: 5px; }
   ::selection { background: var(--color-ink); color: var(--color-tan); }
   dialog::backdrop { background: rgb(17 17 15 / 65%); }
+  dialog { max-height: 90dvh; overflow-y: auto; overscroll-behavior: contain; }
+  h1, h2 { text-wrap: balance; }
+  :root { color-scheme: light; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+}
+
+header nav .site-nav-link::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 8px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  header nav .site-nav-link:hover::after {
+    opacity: 1;
+  }
 }
 
 @media print {

@@ -7,7 +7,7 @@ import NoticeButton from "./notice-button";
 export function Hero() {
   return <section aria-labelledby="hero-title" className="relative isolate overflow-hidden bg-tan">
     <div className="absolute inset-y-0 right-0 hidden w-[58%] md:block">
-      <img src="/images/placeholder.svg" alt="Hero image placeholder" fetchPriority="high" className="h-full w-full object-cover object-center [mask-image:linear-gradient(to_right,transparent,black_38%)]" />
+      <img width={1000} height={1000} src="/images/placeholder.svg" alt="Hero image placeholder" fetchPriority="high" className="h-full w-full object-cover object-center [mask-image:linear-gradient(to_right,transparent,black_38%)]" />
     </div>
     <div className="relative mx-auto grid max-w-7xl md:min-h-[620px] md:grid-cols-2">
       <div className="flex flex-col items-center justify-center px-6 pt-14 pb-12 text-center md:px-12 md:py-20">
@@ -20,7 +20,7 @@ export function Hero() {
           <ButtonLink href="/book/rim-and-rally?mode=open-play" outline>View open play</ButtonLink>
         </div>
       </div>
-      <img src="/images/placeholder.svg" alt="Hero image placeholder" className="aspect-square w-full object-cover md:hidden" />
+      <img width={1000} height={1000} src="/images/placeholder.svg" alt="Hero image placeholder" className="aspect-square w-full object-cover md:hidden" />
     </div>
   </section>;
 }
@@ -36,7 +36,7 @@ export function CourtDiscovery({ courts }) {
       <div className="mt-10 grid gap-10 md:grid-cols-2 md:gap-6">
         {courts.map((court) => <article key={court.id}>
           <Link href={`/book/rim-and-rally?sport=${court.sport}`} className="group relative block overflow-hidden rounded-t-[24px]" aria-label={`Check availability for ${court.name}`}>
-            <img src={court.image} alt={court.alt} loading="lazy" className="aspect-square w-full object-cover transition-transform duration-500 motion-safe:group-hover:scale-105" />
+            <img width={1000} height={1000} src={court.image} alt={court.alt} loading="lazy" className="aspect-square w-full object-cover transition-transform duration-500 motion-safe:group-hover:scale-105" />
             <span className="absolute top-4 right-4 rounded-full bg-paper px-4 py-2 font-editorial text-xs">{court.label}</span>
           </Link>
           <Eyebrow className="mt-5 text-[8px]">A good game starts here</Eyebrow>
@@ -69,7 +69,7 @@ export function LocationSection() {
         <dl className="mt-7 border-t border-ink/20 text-xs"><div className="grid grid-cols-[64px_1fr] gap-4 border-b border-ink/20 py-4"><dt className="text-[9px] uppercase">Location</dt><dd className="font-editorial leading-6">Carlos Trinidad Ave, Salitran IV, Dasmariñas, Philippines</dd></div><div className="grid grid-cols-[64px_1fr] gap-4 border-b border-ink/20 py-4"><dt className="text-[9px] uppercase">Hours</dt><dd className="font-editorial leading-6">Daily, 8:00 AM–12:00 midnight</dd></div><div className="grid grid-cols-[64px_1fr] gap-4 border-b border-ink/20 py-4"><dt className="text-[9px] uppercase">Also on</dt><dd className="font-editorial leading-6">ReClub</dd></div></dl>
         <ButtonLink href="/facilities/rim-and-rally" className="mt-5">Plan your visit <Arrow /></ButtonLink>
       </div>
-      <img src="/images/placeholder.svg" alt="Facility image placeholder" loading="lazy" className="aspect-square w-full rounded-2xl object-cover" />
+      <img width={1000} height={1000} src="/images/placeholder.svg" alt="Facility image placeholder" loading="lazy" className="aspect-square w-full rounded-2xl object-cover" />
     </div>
   </section>;
 }

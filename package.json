@@ -9,7 +9,9 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "staff:bootstrap": "node --env-file-if-exists=.env.local scripts/bootstrap-staff.mjs",
+    "test:staff": "playwright test --config staff.playwright.config.mjs"
   },
   "dependencies": {
     "date-fns": "^4.4.0",

@@ -1,0 +1,10 @@
+{% extends 'rim_rally/base.html' %}
+{% block title %}Page not found | Rim &amp; Rally{% endblock %}
+{% block content %}
+  <section class="mx-auto min-h-[60vh] max-w-3xl px-6 py-24">
+    <p class="text-xs tracking-widest uppercase">404 / Out of bounds</p>
+    <h1 class="mt-5 text-4xl font-bold">This court isn’t here.</h1>
+    <p class="mt-5 text-sm">Let’s get you back to the hub.</p>
+    <a href="{{ home_url }}" class="{{ button }} {{ primary }} mt-8">Back home</a>
+  </section>
+{% endblock %}

@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { createHoldEngine, HOLD_DURATION } from "@/mocks/hold-engine";
-import { validateHold, validateAcknowledgement, validateRelease } from "@/services/hold-service";
+import { getHold, validateHold, validateAcknowledgement, validateRelease } from "@/services/hold-service";
 import { contextKey, holdReducer, holdState, normalizeMobile, remainingMs, validateGuest } from "@/features/booking/hold-state";
 import { validateSchedule } from "@/services/scheduling-service";
 import { mockAvailability, mockOpenPlay } from "@/mocks/scheduling";
@@ -8,6 +8,7 @@ import { mockAvailability, mockOpenPlay } from "@/mocks/scheduling";
 const context = { facilityId: "rim-and-rally", sport: "pickleball", date: "2030-01-01", mode: "court" };
 const input = (...hours) => ({ ...context, slotIds: hours.map((hour) => `${context.date}_pickleball-1_${hour}`) });
 const options = (credential = "guest-a", idempotencyKey = "request-a") => ({ credential, idempotencyKey });
+afterEach(() => { vi.unstubAllEnvs(); vi.unstubAllGlobals(); });
 function fixture() {
   let db = { version: 1, holds: [] }, clock = Date.parse("2029-12-31T00:00:00Z"), count = 0, queue = Promise.resolve();
   const engine = createHoldEngine({ read: () => structuredClone(db), write: (value) => { db = structuredClone(value); }, now: () => clock, random: () => `hold-${++count}`, hash: async (text) => `hash-of-${text.length}-${text.split("").reverse().join("")}`, lock: (work) => { const next = queue.then(work); queue = next.catch(() => {}); return next; } });
@@ -15,6 +16,15 @@ function fixture() {
 }
 
 describe("acknowledged temporary holds", () => {
+  it("rejects a recovery response for a different hold", async () => {
+    const { engine } = fixture();
+    const otherHold = await engine.create(input(8), options());
+    vi.stubEnv("NEXT_PUBLIC_API_MODE", "http");
+    vi.stubEnv("NEXT_PUBLIC_API_BASE_URL", "https://example.test/api");
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true, json: async () => otherHold }));
+    await expect(getHold("requested-hold", options())).rejects.toMatchObject({ code: "INVALID_RESPONSE" });
+  });
+
   it("creates a ten-minute hold using service pricing, with a valid quote", async () => {
     const { engine, now } = fixture(); const hold = await engine.create({ ...input(8), amount: 1, guestName: "must-not-persist" }, options());
     expect(Date.parse(hold.expiresAt) - now()).toBe(HOLD_DURATION);

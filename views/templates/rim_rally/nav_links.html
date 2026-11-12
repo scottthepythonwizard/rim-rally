@@ -1,0 +1,4 @@
+<a href="{{ home_url }}" data-home-link{% if current == 'home' %} aria-current="page"{% endif %} class="site-nav-link relative inline-flex min-h-11 items-center font-editorial {{ size }}">Home</a>
+<a href="{{ book_url }}?mode=open-play" class="site-nav-link relative inline-flex min-h-11 items-center font-editorial {{ size }}">Book / Open play</a>
+<a href="{{ home_url }}#about" data-about-link{% if current == 'about' %} aria-current="location"{% endif %} class="site-nav-link relative inline-flex min-h-11 items-center font-editorial {{ size }}">About</a>
+<a href="{{ login_url }}" class="{{ button }} {{ primary }}">Log in</a>

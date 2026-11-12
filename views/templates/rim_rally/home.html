@@ -1,0 +1,71 @@
+{% extends 'rim_rally/base.html' %}
+{% load static %}
+{% block content %}
+  <section aria-labelledby="hero-title" class="relative isolate overflow-hidden bg-tan">
+    <div class="absolute inset-y-0 right-0 hidden w-[58%] md:block">
+      <img src="{% static 'images/placeholder.svg' %}" width="1000" height="1000" alt="Hero image placeholder" fetchpriority="high" class="h-full w-full object-cover object-center [mask-image:linear-gradient(to_right,transparent,black_38%)]">
+    </div>
+    <div class="relative mx-auto grid max-w-7xl md:min-h-[620px] md:grid-cols-2">
+      <div class="flex flex-col items-center justify-center px-6 pt-14 pb-12 text-center md:px-12 md:py-20">
+        <img src="{% static 'brand/logo.jpg' %}" width="80" height="80" alt="" class="mb-3 h-20 w-20 object-contain">
+        <p class="{{ eyebrow }} mb-8 text-[8px]">RIM &amp; RALLY SPORTS HUB</p>
+        <h1 id="hero-title" class="max-w-md text-[44px] leading-[0.98] font-bold tracking-[-0.055em] sm:text-[58px]">Your home for<br>pickleball and<br>basketball.</h1>
+        <p class="mt-6 text-sm">Built for games. Made for people.</p>
+        <div class="mt-8 flex w-full max-w-sm flex-col justify-center gap-3 sm:flex-row">
+          <a href="{{ book_url }}" class="{{ button }} {{ primary }} shrink-0">Book a court {% include 'rim_rally/arrow.html' %}</a>
+          <a href="{{ book_url }}?mode=open-play" class="{{ button }} border border-current hover:bg-ink/5">View open play</a>
+        </div>
+      </div>
+      <img src="{% static 'images/placeholder.svg' %}" width="1000" height="1000" alt="Hero image placeholder" class="aspect-square w-full object-cover md:hidden">
+    </div>
+  </section>
+
+  {% include 'rim_rally/courts.html' %}
+
+  <section id="membership" aria-labelledby="membership-title" class="border border-ink/25 bg-court px-6 py-16 text-ink md:px-12 md:py-24">
+    <div class="mx-auto grid max-w-6xl items-center gap-10 md:grid-cols-2 md:gap-20">
+      <div>
+        <p class="{{ eyebrow }}">For the regulars</p>
+        <h2 id="membership-title" class="mt-4 text-4xl leading-none font-bold tracking-[-0.04em] md:text-5xl">RIM &amp; RALLY<br>MEMBERSHIP</h2>
+        <p class="mt-6 max-w-sm text-sm leading-7 text-ink/80">Unlimited open play for members, plus club privileges made for regular players.</p>
+      </div>
+      <div class="border border-ink/30 p-7 md:p-9">
+        <div class="grid grid-cols-2 gap-4 border-b border-ink/20 pb-6">
+          <div><p class="font-editorial text-3xl">₱1,600</p><p class="mt-2 text-xs text-ink/75">per month · without shirt</p></div>
+          <div><p class="font-editorial text-3xl">₱1,800</p><p class="mt-2 text-xs text-ink/75">per month · with club shirt</p></div>
+        </div>
+        <ul class="my-6 divide-y divide-ink/20 text-xs leading-5 text-ink">
+          <li class="py-3">— Unlimited open play for one month</li>
+          <li class="py-3">— Free Rim &amp; Rally sticker for your gate pass</li>
+          <li class="py-3">— Priority access to club activities and events</li>
+          <li class="py-3">— Privilege to represent Rim &amp; Rally in tournaments</li>
+        </ul>
+        {% include 'rim_rally/notice.html' with id='membership-notice' title='Membership is coming' label='Explore membership' arrow=True button_extra='bg-tan text-ink' %}
+        <p class="mt-4 text-[10px] text-ink/75">Prototype pricing. Membership sales are not available.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" aria-labelledby="location-title" class="bg-tan px-6 py-16 md:px-12 md:py-20">
+    <div class="mx-auto grid max-w-6xl items-center gap-10 md:grid-cols-2 md:gap-20">
+      <div>
+        <p class="{{ eyebrow }}">Where to play</p>
+        <h2 id="location-title" class="mt-4 text-5xl leading-none font-bold tracking-[-0.045em]">FIND THE HUB.</h2>
+        <p class="mt-6 max-w-sm text-sm leading-7 text-ink/80">One welcoming space for competitive runs, casual rallies, and everyone in between. Why choose one when you can have both?</p>
+        <dl class="mt-7 border-t border-ink/20 text-xs">
+          <div class="grid grid-cols-[64px_1fr] gap-4 border-b border-ink/20 py-4">
+            <dt class="text-[9px] uppercase">Location</dt><dd class="font-editorial leading-6">Carlos Trinidad Ave, Salitran IV, Dasmariñas, Philippines</dd>
+          </div>
+          <div class="grid grid-cols-[64px_1fr] gap-4 border-b border-ink/20 py-4">
+            <dt class="text-[9px] uppercase">Hours</dt><dd class="font-editorial leading-6">{{ facility.hours }}</dd>
+          </div>
+          <div class="grid grid-cols-[64px_1fr] gap-4 border-b border-ink/20 py-4">
+            <dt class="text-[9px] uppercase">Also on</dt><dd class="font-editorial leading-6">ReClub</dd>
+          </div>
+        </dl>
+        <a href="{{ facility_url }}" class="{{ button }} {{ primary }} mt-5">Plan your visit {% include 'rim_rally/arrow.html' %}</a>
+      </div>
+      <img src="{% static 'images/placeholder.svg' %}" width="1000" height="1000" alt="Facility image placeholder" loading="lazy" class="aspect-square w-full rounded-2xl object-cover">
+    </div>
+  </section>
+{% endblock %}

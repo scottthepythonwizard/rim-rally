@@ -1,0 +1,71 @@
+{% load static %}
+<!doctype html>
+<html lang="en" data-scroll-behavior="smooth">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Rim &amp; Rally | Your next game starts here{% endblock %}</title>
+  <meta name="description" content="Your home for pickleball and basketball. Explore the hub and plan your next game.">
+  <link rel="stylesheet" href="{% static 'rim_rally/site.css' %}">
+  <script src="{% static 'rim_rally/site.js' %}" defer></script>
+</head>
+<body class="antialiased">
+  {% url 'rim_rally:home' as home_url %}
+  {% url 'rim_rally:book' 'rim-and-rally' as book_url %}
+  {% url 'rim_rally:facility' 'rim-and-rally' as facility_url %}
+  {% url 'rim_rally:login' as login_url %}
+  {% with button="inline-flex min-h-11 items-center justify-center gap-3 rounded-full px-6 py-3 text-center font-editorial text-xs transition-colors focus-visible:outline-offset-4" primary="bg-ink text-white hover:bg-ink/80" eyebrow="text-[10px] leading-relaxed font-medium tracking-[0.22em] uppercase" %}
+    <a href="#main" class="sr-only fixed top-3 left-3 z-50 bg-ink px-5 py-3 text-white focus:not-sr-only">Skip to content</a>
+    <header class="relative z-20 border-b border-ink/20 bg-tan">
+      <div class="mx-auto flex min-h-20 max-w-7xl items-center justify-between gap-5 px-6 md:px-12">
+        {% include 'rim_rally/brand.html' with color='text-ink' %}
+        <nav aria-label="Main navigation" class="hidden items-center gap-8 md:flex">
+          {% include 'rim_rally/nav_links.html' with size='text-xs' %}
+        </nav>
+        <details data-mobile-menu class="group md:hidden">
+          <summary class="flex min-h-11 items-center rounded-full border border-ink/30 px-5 font-editorial text-xs list-none">Menu <span aria-hidden="true" class="ml-3">☰</span></summary>
+          <nav aria-label="Mobile navigation" class="absolute inset-x-0 top-full flex max-h-[calc(100dvh-5rem)] flex-col gap-3 overflow-y-auto overscroll-contain border-b border-ink/20 bg-tan px-6 py-5">
+            {% include 'rim_rally/nav_links.html' with size='py-2 text-sm' %}
+          </nav>
+        </details>
+      </div>
+    </header>
+    <main id="main">{% block content %}{% endblock %}</main>
+    <footer class="bg-ink px-6 pt-14 pb-6 text-paper md:px-12">
+      <div class="mx-auto max-w-6xl">
+        <div class="grid gap-10 pb-12 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.6fr]">
+          <div>
+            {% include 'rim_rally/brand.html' with color='text-paper' %}
+            <p class="mt-5 max-w-36 text-xs leading-6 text-paper/70">Built for games. Made for people.</p>
+          </div>
+          <nav aria-label="Booking links">
+            <p class="{{ eyebrow }} text-[8px] text-paper/60">Play</p>
+            <div class="mt-4 flex flex-col gap-4 font-editorial text-xs">
+              <a href="{{ book_url }}">Book a court</a>
+              <a href="{{ book_url }}?mode=open-play">Open play</a>
+              <a href="{{ home_url }}#membership">Membership</a>
+            </div>
+          </nav>
+          <nav aria-label="Facility links">
+            <p class="{{ eyebrow }} text-[8px] text-paper/60">The hub</p>
+            <div class="mt-4 flex flex-col gap-4 font-editorial text-xs">
+              <a href="{{ home_url }}#about">About us</a>
+              <a href="{{ facility_url }}">Visit the hub</a>
+              {% include 'rim_rally/notice.html' with id='contact-notice' title='Contact details pending' label='Contact' plain=True %}
+            </div>
+          </nav>
+          <div>
+            <p class="{{ eyebrow }} text-[8px] text-paper/60">Stay in the loop</p>
+            <p class="mt-4 text-xs text-paper/80">Open play drops, game nights &amp; more.</p>
+            {% include 'rim_rally/notice.html' with id='newsletter-notice' title='Newsletter is coming' label='Get updates' arrow=True button_extra='mt-5 w-full justify-between border-paper/30 text-paper' message='Newsletter subscriptions are not part of this guest-booking release. No email address has been collected.' %}
+          </div>
+        </div>
+        <div class="flex flex-col justify-between gap-3 border-t border-paper/15 pt-5 text-[9px] text-paper/65 sm:flex-row">
+          <p>© {% now "Y" %} Rim &amp; Rally. Frontend prototype.</p>
+          <p>Images pending · Booking and payments are demonstrations.</p>
+        </div>
+      </div>
+    </footer>
+  {% endwith %}
+</body>
+</html>

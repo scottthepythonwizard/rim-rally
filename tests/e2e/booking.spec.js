@@ -1,5 +1,13 @@
 import { expect, test } from "@playwright/test";
 
+test("a booking bookmark with a trailing slash opens the requested Open Play schedule", async ({ page }) => {
+  const response = await page.goto("/book/rim-and-rally/?mode=open-play&date=2030-01-01");
+
+  expect(response.status()).toBe(200);
+  await expect(page).toHaveURL(/\/book\/rim-and-rally\?mode=open-play&date=2030-01-01$/);
+  await expect(page.getByRole("button", { name: "Open Play", exact: true })).toHaveAttribute("aria-pressed", "true");
+});
+
 test("selects consecutive hours, changes court, and clears on date change", async ({ page }) => {
   await page.goto("/book/rim-and-rally?date=2030-01-01");
   await expect(page.getByRole("table")).toBeVisible();

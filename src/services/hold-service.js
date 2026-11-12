@@ -46,7 +46,7 @@ export function validateAcknowledgement(hold, input, id) {
 
 export async function createHold(input, options) { return validateAcknowledgement(validateHold(await holdRequest("create", null, input, options)), input); }
 export async function updateHold(id, input, options) { return validateAcknowledgement(validateHold(await holdRequest("update", id, input, options)), input, id); }
-export async function getHold(id, options) { return validateHold(await holdRequest("get", id, null, options)); }
+export async function getHold(id, options) { return validateAcknowledgement(validateHold(await holdRequest("get", id, null, options)), {}, id); }
 export function validateRelease(result) {
   if (result?.released !== true) throw new ApiError("INVALID_RESPONSE", "Cancellation could not be verified. Check your hold before continuing.");
   return result;

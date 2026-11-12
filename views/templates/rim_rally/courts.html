@@ -1,0 +1,23 @@
+{% load static %}
+<section id="courts" aria-labelledby="courts-title" class="border border-ink/25 bg-court px-6 py-16 md:px-12 md:py-24">
+  <div class="mx-auto max-w-6xl">
+    <p class="{{ eyebrow }}">More ways to play</p>
+    <div class="mt-4 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+      <h2 id="courts-title" class="max-w-2xl text-4xl leading-[0.98] font-bold tracking-[-0.045em] md:text-6xl">WHY CHOOSE ONE WHEN<br class="hidden lg:block"> YOU CAN HAVE BOTH?</h2>
+      <p class="max-w-56 text-sm leading-6">From a quick rally to a full-court run, your next game is already waiting.</p>
+    </div>
+    <div class="mt-10 grid gap-10 md:grid-cols-2 md:gap-6">
+      {% for court in facility.courts %}
+        <article>
+          <a href="{{ book_url }}?sport={{ court.sport|urlencode }}" class="group relative block overflow-hidden rounded-t-[24px]" aria-label="Check availability for {{ court.name }}">
+            <img src="{% static court.image|slice:'1:' %}" alt="{{ court.alt }}" width="1000" height="1000" loading="lazy" class="aspect-square w-full object-cover transition-transform duration-500 motion-safe:group-hover:scale-105">
+            <span class="absolute top-4 right-4 rounded-full bg-paper px-4 py-2 font-editorial text-xs">{{ court.label }}</span>
+          </a>
+          <p class="{{ eyebrow }} mt-5 text-[8px]">A good game starts here</p>
+          <h3 class="mt-2 font-editorial text-2xl">{{ court.name }}</h3>
+          <a href="{{ book_url }}?sport={{ court.sport|urlencode }}" class="mt-1 inline-flex min-h-11 items-center gap-2 font-editorial text-xs underline underline-offset-4">Check availability {% include 'rim_rally/arrow.html' %}</a>
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>

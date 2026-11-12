@@ -1,0 +1,9 @@
+{% extends 'rim_rally/base.html' %}
+{% block title %}Page unavailable | Rim &amp; Rally{% endblock %}
+{% block content %}
+  <section class="mx-auto min-h-[60vh] max-w-3xl px-6 py-24">
+    <h1 class="text-4xl font-bold">This page is temporarily unavailable.</h1>
+    <p class="mt-5 text-sm">Start the Rim &amp; Rally frontend server, then reload this page.</p>
+    <a href="{{ home_url }}" class="{{ button }} {{ primary }} mt-8">Back home</a>
+  </section>
+{% endblock %}
