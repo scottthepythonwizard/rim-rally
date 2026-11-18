@@ -6,6 +6,7 @@ from django.shortcuts import redirect, render
 from django.urls import resolve
 from django.views.decorators.http import require_http_methods, require_safe
 from django.views.decorators.vary import vary_on_headers
+from django.views.decorators.csrf import csrf_exempt
 
 from .next_bridge import forward_to_next
 
@@ -35,6 +36,7 @@ def facility(request, facility_id):
     )
 
 
+@csrf_exempt  # Next.js validates Origin for its own server actions; Django only proxies them.
 @require_http_methods(["GET", "HEAD", "POST"])
 def next_page(request, **route_parameters):
     return forward_to_next(request)
