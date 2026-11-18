@@ -1,0 +1,233 @@
+{
+  "repositoryRoot": "Folder containing manage.py and package.json",
+  "verified": {
+    "paymentTestsPassed": 22,
+    "concurrencyTestsIncluded": 2,
+    "djangoCheck": "passed",
+    "migrationConsistency": "passed"
+  },
+  "files": [
+    {
+      "path": ".env.payments.example",
+      "action": "ADD",
+      "bytes": 556,
+      "sha256": "01d68a80327a4bb92801ed26985baf320bb06d77af901cbd3fa7e78e95ab63a9"
+    },
+    {
+      "path": ".gitignore",
+      "action": "CHANGE",
+      "bytes": 263,
+      "sha256": "8606ecb549b36cb299acd0e8e7ae204d4aae0a2566f9ca00350e58d95dd6f252"
+    },
+    {
+      "path": "README.md",
+      "action": "CHANGE",
+      "bytes": 9540,
+      "sha256": "927d041aa9edbec377e9c247e29f21ad57dfe3d001f0aa3ec209329efda2ec34"
+    },
+    {
+      "path": "docs/PAYMENTS-FILES.md",
+      "action": "ADD",
+      "bytes": 3340,
+      "sha256": "7221bcf4a9f2c4f95ed5e7a960638163ae7a6ffd7720be0fe98ad6f249361140"
+    },
+    {
+      "path": "docs/PAYMENTS-INTEGRATION.md",
+      "action": "ADD",
+      "bytes": 7770,
+      "sha256": "d33978250e2e5666f6b9761b41a6d517a927170525116a30ec468da7acf22b1f"
+    },
+    {
+      "path": "docs/PAYMENTS-SETUP.md",
+      "action": "ADD",
+      "bytes": 10157,
+      "sha256": "8c7570ed5051308e8a88daa87490656f3fb225bc6c181cc847f2df5a22e6d47f"
+    },
+    {
+      "path": "payments/__init__.py",
+      "action": "ADD",
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "path": "payments/admin.py",
+      "action": "ADD",
+      "bytes": 6657,
+      "sha256": "4e45cd89124189e5aa117cf29b4e4d4ef9bf7925f10599b510ad33056d1e7dc4"
+    },
+    {
+      "path": "payments/apps.py",
+      "action": "ADD",
+      "bytes": 148,
+      "sha256": "4357bc9626e1ed75fa674755108dcdd275f27e2c473e4384ff38249acd03d694"
+    },
+    {
+      "path": "payments/forms.py",
+      "action": "ADD",
+      "bytes": 2837,
+      "sha256": "ea3a6f5eb4e95c641001dd232701252a66c4652616c4ecd8f993f96511e6f607"
+    },
+    {
+      "path": "payments/images.py",
+      "action": "ADD",
+      "bytes": 1496,
+      "sha256": "d2bb0edde41c5ad90674d2e95e1d785032b566b00eb233912af94c2f959ed72f"
+    },
+    {
+      "path": "payments/management/__init__.py",
+      "action": "ADD",
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "path": "payments/management/commands/__init__.py",
+      "action": "ADD",
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "path": "payments/management/commands/expire_bookings.py",
+      "action": "ADD",
+      "bytes": 344,
+      "sha256": "d621d4e6e116033f54e64e2ac736b58f5927f40d2790521aabca2da6b32799ac"
+    },
+    {
+      "path": "payments/management/commands/seed_payment_courts.py",
+      "action": "ADD",
+      "bytes": 588,
+      "sha256": "26542107c5c1a0802b359b120adcee183b5893844dd7df16aa24819fb10bea66"
+    },
+    {
+      "path": "payments/management/commands/send_payment_emails.py",
+      "action": "ADD",
+      "bytes": 2443,
+      "sha256": "30f96bfeb34bb786ebaf683eeebdc8d02e919b8c0f49fc6999e3ec6683437453"
+    },
+    {
+      "path": "payments/migrations/0001_initial.py",
+      "action": "ADD",
+      "bytes": 7683,
+      "sha256": "03ef1e1817112324b4c2fb07857f50cf98a77fceeaebb5724be7e501ef1e1fa4"
+    },
+    {
+      "path": "payments/migrations/0002_email_delivery_leases.py",
+      "action": "ADD",
+      "bytes": 601,
+      "sha256": "ac41fa5cb58ff489a6d89c69dd0ad5a6b4ad87b40da64a15e99f8c1adfc749bd"
+    },
+    {
+      "path": "payments/migrations/__init__.py",
+      "action": "ADD",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "payments/models.py",
+      "action": "ADD",
+      "bytes": 4811,
+      "sha256": "a36bb2f1ac3ae1d6eab4e7974ca29579ed60e3597eb7bd46c508ad3e624acc4b"
+    },
+    {
+      "path": "payments/services.py",
+      "action": "ADD",
+      "bytes": 9855,
+      "sha256": "4cdaeb2cd1d91198b0c66f9dfdab52c716b8dd8947be93d483537fffe6c8b9d1"
+    },
+    {
+      "path": "payments/templates/admin/payments/review.html",
+      "action": "ADD",
+      "bytes": 1034,
+      "sha256": "2f8934a8798b5df7ee42cade36c66e945f009e055442e08d7c262990bd6f445c"
+    },
+    {
+      "path": "payments/templates/payments/base.html",
+      "action": "ADD",
+      "bytes": 1388,
+      "sha256": "3afe6742165769f12d7ac96a8e0b4fe5841e81db1e00af37a4a5afe9cefd42e6"
+    },
+    {
+      "path": "payments/templates/payments/book.html",
+      "action": "ADD",
+      "bytes": 609,
+      "sha256": "affbe105a11c360e97028a5bfa0ee29febb2a026f0c682a211c5a7c52392970c"
+    },
+    {
+      "path": "payments/templates/payments/detail.html",
+      "action": "ADD",
+      "bytes": 2115,
+      "sha256": "2ef5eb7b99335d6496bdf06a905141d881e52171079075bc3f3ff1394c210ed5"
+    },
+    {
+      "path": "payments/templates/payments/form.html",
+      "action": "ADD",
+      "bytes": 175,
+      "sha256": "f15b326111baa263a73b54aa8522f18d286b7891dc8e621bfae710c7e6abc8c1"
+    },
+    {
+      "path": "payments/templates/payments/login.html",
+      "action": "ADD",
+      "bytes": 369,
+      "sha256": "826236b2a8fee363e642a92cfb6b4379b090721ad232113de04ef8b485212c07"
+    },
+    {
+      "path": "payments/templates/payments/mine.html",
+      "action": "ADD",
+      "bytes": 348,
+      "sha256": "87fe8fd1cd58e2a2038ac8e5b97c47c15395aec0312a1e61370d48e2d16c3a33"
+    },
+    {
+      "path": "payments/tests.py",
+      "action": "ADD",
+      "bytes": 16608,
+      "sha256": "f0d18276fe1aecfbe0276053c39aee2fd82beb2314a066691b8ca839ea49f03b"
+    },
+    {
+      "path": "payments/urls.py",
+      "action": "ADD",
+      "bytes": 853,
+      "sha256": "2892ebe3677dede5cde77a9199a4b87749fde65c115643d7781ddf1f6b088b8f"
+    },
+    {
+      "path": "payments/views.py",
+      "action": "ADD",
+      "bytes": 6929,
+      "sha256": "c158a99cacbb222d0ed4e56fd94436769fb8ac3517705b897f3f69eb4ac247bb"
+    },
+    {
+      "path": "requirements.txt",
+      "action": "CHANGE",
+      "bytes": 29,
+      "sha256": "c16d730583fab4826f9c4fea215d0d57700d3fd270a8b0f1935e75636c9e7fcf"
+    },
+    {
+      "path": "rim_rally_site/__init__.py",
+      "action": "ADD",
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "path": "rim_rally_site/settings.py",
+      "action": "ADD",
+      "bytes": 3721,
+      "sha256": "3481d231fcb78be1910fcd0e95d54c493a82d8c2e2ef6c7ccab868bb18ecdfd1"
+    },
+    {
+      "path": "rim_rally_site/urls.py",
+      "action": "ADD",
+      "bytes": 213,
+      "sha256": "b7d399f135137d12ce19300b1f2f716697ec8599f2343e9a03c994f76da05c30"
+    },
+    {
+      "path": "rim_rally_site/wsgi.py",
+      "action": "ADD",
+      "bytes": 173,
+      "sha256": "a7fd585b337cabafcb3c16d1886ec14b7b305fb67b9fb4965dcf6eba006ff88f"
+    },
+    {
+      "path": "views/views.py",
+      "action": "CHANGE",
+      "bytes": 2039,
+      "sha256": "9c1a8697c0e2da45c77d19317490f2f9f82bec4cf80681b0ef9e1a4ccc860b08"
+    }
+  ]
+}

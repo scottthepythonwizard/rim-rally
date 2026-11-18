@@ -2,6 +2,14 @@
 
 Court booking prototype built with Next.js App Router and Tailwind CSS. Guest scheduling and checkout use mocks. Staff accounts and schedules use SQLite.
 
+## Manual QR payment backend
+
+The Django payment module implements customer login, expiring reservations, owner QR instructions,
+private receipt uploads, staff verification, and queued booking confirmation emails.
+Start at `/payments/book/` and use `/admin/` for payment operations.
+Follow [payment setup](docs/PAYMENTS-SETUP.md) and [frontend integration](docs/PAYMENTS-INTEGRATION.md).
+The existing Next.js mock checkout is unchanged and is a separate flow until the frontend team connects it.
+
 For the Django entry point, see [Run Rim & Rally through Django](docs/DJANGO.md).
 
 ## Run locally
