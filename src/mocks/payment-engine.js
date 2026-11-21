@@ -1,4 +1,4 @@
-import { ApiError } from "@/services/api-client";
+import { ApiError } from "@/services/http/api-client";
 import { validateGuest, normalizeMobile } from "@/features/booking/hold-state";
 
 // Attached to the hold engine's lock/store so allocation and mock settlement are atomic.

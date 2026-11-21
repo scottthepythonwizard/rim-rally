@@ -6,7 +6,7 @@
  * @property {"PHP"} currency
  * @property {number} amount Integer centavos from the acknowledged service quote.
  * @property {"pending"|"succeeded"|"failed"|"cancelled"|"unknown"} status
- * @property {"none"|"pending"|"confirmed"} bookingStatus
+ * @property {"none"|"pending"|"confirmed"|"canceled"} bookingStatus
  * @property {string=} bookingId
  * @property {string} serverNow ISO timestamp with explicit timezone.
  */

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { validateBooking } from "@/services/payment-operations";
+import { validateBooking } from "@/services/payments/payment-operations";
 
 const receipt = () => ({ id: "booking", holdId: "hold", status: "confirmed", reference: "RR-123", facilityName: "Rim & Rally", courtName: "Court 1", context: { facilityId: "rim-and-rally", sport: "pickleball", date: "2030-01-01", mode: "court" }, slots: [{ courtId: "pickleball-1", startAt: "2030-01-01T23:00:00+08:00", endAt: "2030-01-02T00:00:00+08:00" }], session: null, amount: 40000, currency: "PHP", method: "gcash", ticketToken: "opaque-demo-token" });
 

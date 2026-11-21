@@ -1,4 +1,4 @@
-import { Eyebrow } from "@/components/ui";
+import { Eyebrow } from "@/components/ui/primitives";
 import { JoinForm } from "@/features/staff/forms";
 
 export const metadata = { title: "Accept staff invitation", robots: { index: false, follow: false }, referrer: "no-referrer" };

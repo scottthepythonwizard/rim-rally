@@ -1,106 +1,29 @@
-# Rim & Rally
+# Rim & Rally frontend
 
-Court booking prototype built with Next.js App Router and Tailwind CSS. Guest scheduling and checkout use mocks. Staff accounts and schedules use SQLite.
+Next.js 16 / React frontend for court bookings, open play, manual payment proof,
+digital passes and staff management. The Django backend is maintained separately.
 
-## Manual QR payment backend
+## Install and run
 
-The Django payment module implements customer login, expiring reservations, owner QR instructions,
-private receipt uploads, staff verification, and queued booking confirmation emails.
-Start at `/payments/book/` and use `/admin/` for payment operations.
-Follow [payment setup](docs/PAYMENTS-SETUP.md) and [frontend integration](docs/PAYMENTS-INTEGRATION.md).
-The existing Next.js mock checkout is unchanged and is a separate flow until the frontend team connects it.
+Use Node.js 24 and npm. Run `npm ci`, copy `.env.example` to `.env.local`, and run
+`npm run dev`. Never commit real environment credentials or customer records.
 
-For the Django entry point, see [Run Rim & Rally through Django](docs/DJANGO.md).
+`npm run build` builds production output; `npm start` serves it.
+On Windows, `npm run build -- --webpack` is an available alternative to Turbopack.
 
-## Run locally
+## Backend connection
 
-Prerequisite: Node.js 24. The staff dashboard uses Node’s built-in SQLite module.
+See [backend connection](docs/BACKEND-CONNECTION.md). Django is not bundled here.
+The frontend can install and build without Python, a database, or a running backend.
+Backend-dependent actions need the separately hosted service to work at runtime.
+Set `NEXT_PUBLIC_BACKEND_ENABLED=0` and rebuild to show the paused screens, or use
+`NEXT_PUBLIC_API_MODE=mock` for an explicit demonstration without real payments.
 
-1. Run `npm ci`.
-2. Run `npm run dev`.
-3. Open http://127.0.0.1:3000.
-4. Select Book a court in the hero, or open `/book/rim-and-rally`.
+## Checks and organization
 
-Other commands: `npm run lint`, `npm run build`, and `npm start` (after a build).
+Run `npm test` and `npm run lint`. The retained unit/component/service tests cover
+booking validation, payment states, API errors, rendering, and safely paused access.
+Backend-dependent browser fixtures and retired Node database tests are excluded.
 
-## Current milestone: Phase 6 frontend demo delivery
-
-- Prototype-based landing page with the user's corrected copy and navigation.
-- Supplied theme colors, local 42dot Sans / Noto Serif, neutral image placeholders.
-- Hybrid calendar: React DayPicker plus our own court/hour matrix and service-backed availability.
-- Previous/next day, Today/Tomorrow, sport, court, and Court/Open Play controls.
-- Asia/Manila dates; 16 hourly slots from 8 AM through next-day midnight.
-- Available, selected, held, booked and elapsed states with readable labels.
-- Consecutive hours on one court, mixed peak/off-peak pricing, integer-centavo totals.
-- Open Play occupancy, remaining places, one-place selection, full/started session disabling.
-- Desktop matrix, mobile single-court list, sticky mobile selection total.
-- Loading, retry, no-schedule, sold-out, slow and malformed-response previews.
-- Abortable reads, 15-second HTTP timeout, validation, refresh/reconciliation.
-
-**Implemented with mocks:** GCash/Maya/QRPh checkout, payment recovery, confirmed demo receipts and printable QR passes. Real money processing, production allocation and ticket verification still require the backend.
-
-## Tests
-
-- `npm test`: Vitest scheduling, service, and component tests.
-- `npm run test:watch`: interactive unit test mode.
-- `npx playwright install chromium`: install the browser once before browser tests.
-- `npm run test:e2e`: browser acceptance tests; reuses the local server on port 3000, or starts it if needed.
-- To reuse a running local server, set `PLAYWRIGHT_BASE_URL` to its URL before running `npm run test:e2e`. Avoid starting multiple development servers for the same project.
-
-The UI offers collapsed “Demo availability scenarios” controls. Scenarios can also be shared through `scenario=normal|sold-out|empty|error|slow|malformed` in the booking URL.
-
-See [roadmap](docs/ROADMAP.md) for progress and next tasks, [API contract](docs/API-CONTRACT.md) for backend handoff, [architecture](docs/ARCHITECTURE.md) for frontend boundaries, and [assets](docs/ASSETS.md) for image policy.
-
-## Architecture
-
-`src/app/` contains Server Component route shells. `src/features/booking/` contains the small client booking boundary, presentational views, date helpers, and selection reducer. `src/services/` owns HTTP/mock adapters and validation. `src/mocks/` contains illustrative inventory and pricing. Components never query a database.
-
-Copy `.env.example` to `.env.local` if configuring a live service. `NEXT_PUBLIC_API_MODE=http` enables scheduling, hold, payment and booking HTTP adapters (provider QRPh/cancellation still require agreement); the default is mock. `NEXT_PUBLIC_API_BASE_URL` supplies the API base URL. Facility discovery remains mock-backed. Restart Next.js after environment changes. See the API contract for CORS and response requirements.
-
-## Design and scope
-
-Preserve the supplied prototype and corrected content. All court/facility image areas use neutral local SVG placeholders; add actual images only at the user's direction. Square frames remain 1:1. The logo is still an approximation until original artwork is supplied. The user confirmed one basketball half-court and flat PHP 400/hour court rates for both sports. Availability, Open Play rates/capacities, peak windows and the three-court pickleball fixture remain demo data pending backend confirmation.
-### Phase 3 behavior
-
-- Selecting an available hour or Open Play place requests a service-acknowledged ten-minute hold.
-- Consecutive-hour edits replace the same hold atomically without extending expiry.
-- Another court/date/sport/mode releases the previous hold before acquiring a new one.
-- Countdown uses service expiry plus monotonic elapsed time, remains visible while scrolling, and revalidates after focus/reconnection and before proceeding.
-- Lost acknowledgements retain the same idempotency key; retry reconciles the original request instead of creating another hold.
-- Browser reload recovers the hold using an opaque session recovery record. Name, email and mobile stay only in React memory and are not restored after reload.
-- Guest form validates name, email and Philippine mobile formats; review shows the acknowledged quote and normalized phone number.
-- Same-origin tab competition is simulated using Web Locks and non-personal localStorage records. Real cross-user locking requires the backend.
-- Cancellation and expiry release or invalidate the held resources. Demo hold controls can expire a hold immediately for testing.
-
-Backend agreement and live integration details: [hold API contract](docs/HOLD-API-CONTRACT.md). The existing scheduling API contract remains applicable, with ownership fields described in the hold contract.
-
-Verified: 37 unit/component tests, 14 browser acceptance tests, lint and production build. Browser tests cover late/uncertain acknowledgements, cross-tab conflicts, Open Play capacity, expiry, reload recovery, private-data storage checks, and guest-form responsiveness at 360/390/768/1024/1440px.
-### Phase 4 checkout (November 1)
-
-Payment dialogs now connect to the acknowledged hold. The service determines payment/booking status; wallet/reference input never confirms a booking. Failed payments offer retry/cancel; uncertain or delayed outcomes reconcile the same operation. Polling pauses while hidden and checks on return. Double clicks and lost acknowledgements use one idempotency key.
-
-The confirmation route displays a receipt, an opaque per-booking QR token and Print / Save as PDF. Payment QRs and passes are clearly labeled demonstrations. No money is collected. No guest contact or payment input is persisted in browser storage. After a full reload the mock pass retains its booking but clears the guest name; the production backend must return guestName.
-
-See [payment API contract and mock scenarios](docs/PAYMENT-API-CONTRACT.md). Next: final verification and backend handoff; live provider integration remains optional and depends on backend readiness. The earlier [foundation checklist](docs/PHASE-4-FOUNDATION.md) is historical.
-
-Phase 4 verification: **54 unit/component tests and 28 Playwright browser tests pass**. Lint and production build pass. Pass overflow was checked at 360/390/768/1024/1440px; the screenshot smoke flow reported no page errors. Print media hides navigation/footer, waits for a generated QR before enabling print, and keeps the pass visible. Real device printing and backend/provider integration remain final-handoff checks.
-
-Screenshots (fictitious demo guest): [checkout](docs/screenshots/phase-4-payment.jpg), [desktop pass](docs/screenshots/phase-4-pass.jpg), [mobile pass](docs/screenshots/phase-4-mobile-pass.jpg).
-
-### Phase 5 verification (November 2)
-
-Added automated accessibility checks across five widths, keyboard-scroll/semantic fixes, stronger confirmed-receipt context/time validation, API-provided court labels and compact mobile print styles. See [verification evidence](docs/PHASE-5-VERIFICATION.md) and the [team handoff / demo guide](docs/HANDOFF.md).
-
-Next milestone is Phase 6: protected buffer, real-device acceptance, demo rehearsal and final delivery. Live payments and provider integration remain backend dependencies.
-
-Final Phase 5 verification: 61 unit/component tests and 35 Playwright tests pass, including the axe accessibility scans. Lint and production build pass. Automated coverage uses Chromium; real-device/native-print/provider acceptance remains explicit in HANDOFF.md.
-
-### Phase 6 delivery (November 3)
-
-The current restored design is frozen for the frontend mock demonstration. See [final delivery checklist](docs/FINAL-DELIVERY.md), [team handoff](docs/HANDOFF.md) and [source fingerprint](docs/DELIVERY-MANIFEST.json). This milestone adds release evidence and production rehearsal without changing the UI. Physical-device/native-print and live-backend/provider acceptance remain explicitly separate. No push or deployment is included.
-
-Phase 6 final verification: 61 unit/component tests and 35 production-browser tests pass; lint, build and dependency consistency pass. The release fingerprint verifies 87 checked files. See docs/FINAL-DELIVERY.md for external acceptance gates.
-
-For a beginner-friendly file-by-file walkthrough and backend integration explanation, see [Frontend team guide](docs/FRONTEND-TEAM-GUIDE.md).
-
-See [Staff and admin access](docs/STAFF-ACCESS.md) for first-admin setup, hosting configuration, and dashboard verification.
+See [frontend structure](docs/FRONTEND-STRUCTURE.md) for where new code belongs.
+Older milestone documents are historical references, not current backend setup.

@@ -1,5 +1,5 @@
 import { paymentEngine } from "./payment-engine";
-import { ApiError } from "@/services/api-client";
+import { ApiError } from "@/services/http/api-client";
 import { mockAvailability, mockOpenPlay } from "./scheduling";
 import { toggleSlot } from "@/features/booking/scheduling";
 

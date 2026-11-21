@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { getSchedule, validateSchedule } from "@/services/scheduling-service";
-import { getJson, normalizeError } from "@/services/api-client";
+import { getSchedule, validateSchedule } from "@/services/booking/scheduling-service";
+import { getJson, normalizeError } from "@/services/http/api-client";
 import { mockAvailability } from "@/mocks/scheduling";
 
 const query = { facilityId: "rim-and-rally", sport: "pickleball", date: "2030-01-01", scenario: "normal" };
@@ -43,16 +43,15 @@ describe("schedule service boundaries", () => {
     await expect(getSchedule({ ...query, scenario: "error" })).rejects.toMatchObject({ code: "DEMO_UNAVAILABLE" });
     await expect(getSchedule({ ...query, scenario: "malformed" })).rejects.toMatchObject({ code: "INVALID_RESPONSE" });
   });
-  it("times out HTTP reads after 15 seconds", async () => {
-    vi.useFakeTimers(); vi.stubEnv("NEXT_PUBLIC_API_BASE_URL", "https://example.test/api");
-    vi.stubGlobal("fetch", vi.fn((url, options) => new Promise((resolve, reject) => options.signal.addEventListener("abort", () => reject(new DOMException("Aborted", "AbortError"))))));
-    const result = getJson("/availability").catch((error) => error);
-    await vi.advanceTimersByTimeAsync(15001);
-    expect(await result).toMatchObject({ code: "TIMEOUT", retryable: true });
+  it("blocks HTTP reads immediately while integration is paused", async () => {
+    vi.stubGlobal("fetch", vi.fn());
+    await expect(getJson("/availability")).rejects.toMatchObject({ code: "TEMPORARILY_UNAVAILABLE", message: "Temporarily unavailable" });
+    expect(fetch).not.toHaveBeenCalled();
   });
-  it("ignores mismatched backend dates", async () => {
+  it("does not contact an external backend even if an HTTP URL is configured", async () => {
     vi.stubEnv("NEXT_PUBLIC_API_MODE", "http"); vi.stubEnv("NEXT_PUBLIC_API_BASE_URL", "https://example.test/api");
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true, json: async () => mockAvailability({ ...query, date: "2030-01-02" }) }));
-    await expect(getSchedule(query)).rejects.toMatchObject({ code: "MISMATCHED_RESPONSE" });
+    vi.stubGlobal("fetch", vi.fn());
+    await expect(getSchedule(query)).rejects.toMatchObject({ code: "TEMPORARILY_UNAVAILABLE" });
+    expect(fetch).not.toHaveBeenCalled();
   });
 });

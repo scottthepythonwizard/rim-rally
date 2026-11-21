@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
-import { createHold, getHold, updateHold, releaseHold, expireDemoHold } from "@/services/hold-service";
-import { ApiError } from "@/services/api-client";
+import { createHold, getHold, updateHold, releaseHold, expireDemoHold } from "@/services/booking/hold-service";
+import { ApiError } from "@/services/http/api-client";
 import { contextKey, holdReducer, holdState, RECOVERY_KEY, remainingMs, validateGuest } from "./hold-state";
 
 const terminal = (error) => ["HOLD_EXPIRED", "NOT_FOUND", "HTTP_404", "HTTP_410"].includes(error.code);

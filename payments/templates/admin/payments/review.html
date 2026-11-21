@@ -1,7 +1,0 @@
-{% extends 'admin/base_site.html' %}{% block content %}
-<h1>Verify payment in the owner's account</h1>
-<p>Booking {{ booking.id }}<br>Customer: {{ booking.customer_email }}<br>{{ booking.court }} — {{ booking.starts_at }} to {{ booking.ends_at }} (Asia/Manila)<br>Type: {% if booking.play_session %}Open Play — {{ booking.play_session.name }}{% else %}Court rental{% endif %}<br>Total: PHP {{ booking.pesos }}<br>Status: {{ booking.get_status_display }}<br>Deadline: {{ booking.expires_at }}<br>Payee: {{ booking.payee }} — {{ booking.account }}</p>
-<p>{{ proof_link }}</p>{% if booking.receipt %}<p>Customer transaction reference: {{ booking.receipt.customer_reference }}</p>{% endif %}
-<p>Match the transfer in the owner's wallet/bank history to this receipt, amount and recipient. A screenshot alone does not prove funds arrived. Rejection releases the slot; any refund must be handled separately.</p>
-<form method="post">{% csrf_token %}{{ form.as_p }}<input type="submit" value="Save payment review"></form>
-{% endblock %}

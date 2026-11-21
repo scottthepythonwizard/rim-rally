@@ -1,9 +1,9 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import Confirmation from "@/features/checkout/confirmation";
-import { getBooking, PAYMENT_RECOVERY } from "@/services/payment-operations";
+import { getBooking, PAYMENT_RECOVERY } from "@/services/payments/payment-operations";
 
-vi.mock("@/services/payment-operations", () => ({ getBooking: vi.fn(), PAYMENT_RECOVERY: "test-payment-recovery" }));
+vi.mock("@/services/payments/payment-operations", () => ({ getBooking: vi.fn(), PAYMENT_RECOVERY: "test-payment-recovery" }));
 vi.mock("@/features/checkout/ticket-qr", () => ({ default: ({ token, onReady }) => <button onClick={onReady}>Encode {token}</button> }));
 const receipt = (id) => ({ id, reference: `RR-${id}`, guestName: "Demo Guest", context: { sport: "pickleball", date: "2030-01-01" }, facilityName: "Rim & Rally", courtName: "Court 1", slots: [{ startAt: "2030-01-01T08:00:00+08:00", endAt: "2030-01-01T09:00:00+08:00" }], amount: 40000, method: "gcash", ticketToken: `token-${id}` });
 beforeEach(() => { vi.clearAllMocks(); sessionStorage.setItem(PAYMENT_RECOVERY, JSON.stringify({ credential: "secret" })); });

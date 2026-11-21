@@ -1,5 +1,6 @@
+import { STAFF_API_AVAILABLE } from "@/config/backend";
 import { requireStaff } from "@/server/staff-session";
-import { db } from "@/server/staff-store.mjs";
+import { listSchedules } from "@/server/staff-data";
 import { formatDay, formatTime, manilaDate, money } from "@/features/booking/scheduling";
 import { changeSchedule, saveSchedule } from "@/features/staff/actions";
 import { ActionForm } from "@/features/staff/forms";
@@ -37,7 +38,7 @@ function ScheduleAction({ schedule, operation, label, confirm }) {
 
 export default async function DashboardPage() {
   await requireStaff();
-  const schedules = db().prepare("SELECT * FROM schedules ORDER BY starts, id").all();
+  const schedules = await listSchedules();
   return <>
     <h1 className="font-editorial text-3xl sm:text-4xl">Open Play schedules</h1>
     <p className="mt-3 text-sm">All times are in Asia/Manila. Use 12:00 AM as the end time for a session that ends at midnight.</p>
@@ -46,8 +47,8 @@ export default async function DashboardPage() {
       <ScheduleForm />
     </section>
     <section className="mt-8 space-y-4" aria-label="Saved schedules">
-      {!schedules.length && <p className="text-sm">No schedules yet.</p>}
-      {schedules.map((schedule) => <article key={schedule.id} className="rounded-xl border border-ink/20 p-5">
+      {STAFF_API_AVAILABLE && !schedules.length && <p className="text-sm">No schedules yet.</p>}
+      {schedules.map((schedule) => <article id={`schedule-${schedule.id}`} key={schedule.id} className="scroll-mt-6 rounded-xl border border-ink/20 p-5">
         <div className="flex flex-wrap items-center gap-3">
           <h2 className="min-w-0 break-words font-editorial text-xl">{schedule.name}</h2>
           <span className="rounded-full border border-ink/25 bg-tan px-3 py-1 text-xs font-semibold">{schedule.status === "canceled" ? "Canceled" : "Scheduled"}</span>

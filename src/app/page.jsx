@@ -1,5 +1,5 @@
-import { Hero, CourtDiscovery, MembershipSection, LocationSection } from "@/components/landing";
-import { getFacility } from "@/services/facility-service";
+import { Hero, CourtDiscovery, MembershipSection, LocationSection } from "@/features/home/landing-sections";
+import { getFacility } from "@/services/facilities/facility-service";
 
 export default async function HomePage() {
   const facility = await getFacility("rim-and-rally");

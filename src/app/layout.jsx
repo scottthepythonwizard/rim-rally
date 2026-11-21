@@ -1,6 +1,6 @@
 import "./globals.css";
-import SiteHeader from "@/components/site-header";
-import SiteFooter from "@/components/site-footer";
+import SiteHeader from "@/components/layout/site-header";
+import SiteFooter from "@/components/layout/site-footer";
 
 export const metadata = {
   title: { default: "Rim & Rally | Your next game starts here", template: "%s | Rim & Rally" },
