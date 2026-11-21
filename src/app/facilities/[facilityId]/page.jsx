@@ -1,8 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 import { notFound } from "next/navigation";
-import { getFacility } from "@/services/facility-service";
-import { ButtonLink, Eyebrow } from "@/components/ui";
-import { CourtDiscovery } from "@/components/landing";
+import { getFacility } from "@/services/facilities/facility-service";
+import { ButtonLink, Eyebrow } from "@/components/ui/primitives";
+import { CourtDiscovery } from "@/features/home/landing-sections";
 
 export const metadata = { title: "Explore the hub" };
 

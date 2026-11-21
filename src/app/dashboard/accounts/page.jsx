@@ -1,13 +1,13 @@
 import { requireStaff } from "@/server/staff-session";
-import { db } from "@/server/staff-store.mjs";
+import { listAccounts, listInvitations } from "@/server/staff-data";
 import { invite, manageAccount, revokeInvitation } from "@/features/staff/actions";
 import { ActionForm } from "@/features/staff/forms";
 import { fieldClass, primaryClass, secondaryClass } from "@/features/staff/styles";
 
 export default async function AccountsPage() {
   const actor = await requireStaff(true);
-  const accounts = db().prepare("SELECT id,email,role,active FROM accounts ORDER BY email").all();
-  const invitations = db().prepare("SELECT email,role FROM invitations WHERE expires > unixepoch('subsec') * 1000 AND bootstrap=0 ORDER BY email").all();
+  const accounts = await listAccounts();
+  const invitations = await listInvitations();
   return <>
     <h1 className="font-editorial text-3xl sm:text-4xl">Accounts and roles</h1>
     <section className="mt-6 rounded-xl border border-ink/20 bg-tan/30 p-5">

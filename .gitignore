@@ -3,6 +3,7 @@ node_modules/
 out/
 .env*
 !.env.example
+!.env.django.example
 playwright-report/
 test-results/
 *.log
@@ -10,4 +11,8 @@ test-results/
 .rim-rally/
 .venv/
 __pycache__/
-rim_rally/static/rim_rally/site.css
+*.py[cod]
+staticfiles/
+*.sqlite3
+*.sqlite3-shm
+*.sqlite3-wal

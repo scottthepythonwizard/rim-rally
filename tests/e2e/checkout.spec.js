@@ -119,7 +119,7 @@ test("repeated submission stays single and pass is responsive without console er
   const errors = []; page.on("pageerror", (e) => errors.push(e.message)); page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
   await review(page); await page.getByRole("radio", { name: /GCash/ }).check();
   await page.getByRole("button", { name: "Continue to payment", exact: true }).click();
-  await page.screenshot({ path: "docs/screenshots/phase-4-payment.jpg", fullPage: true });
+  await page.screenshot({ path: test.info().outputPath("phase-4-payment.jpg"), fullPage: true });
   await page.getByRole("button", { name: "Start simulated payment", exact: true }).evaluate((button) => { button.click(); button.click(); });
   await expect(page).toHaveURL(/confirmation/); await expect(page.getByRole("img", { name: "Digital ticket QR" })).toBeVisible();
   for (const width of [360, 390, 768, 1024, 1440]) {
@@ -127,8 +127,8 @@ test("repeated submission stays single and pass is responsive without console er
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await expect(page.getByRole("button", { name: "Print / Save as PDF" })).toBeEnabled();
   }
-  await page.screenshot({ path: "docs/screenshots/phase-4-pass.jpg", fullPage: true });
-  await page.setViewportSize({ width: 390, height: 844 }); await page.screenshot({ path: "docs/screenshots/phase-4-mobile-pass.jpg", fullPage: true });
+  await page.screenshot({ path: test.info().outputPath("phase-4-pass.jpg"), fullPage: true });
+  await page.setViewportSize({ width: 390, height: 844 }); await page.screenshot({ path: test.info().outputPath("phase-4-mobile-pass.jpg"), fullPage: true });
   expect(errors).toEqual([]);
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem("rim-rally:demo-holds:v1")).payments.length)).toBe(1);
 });

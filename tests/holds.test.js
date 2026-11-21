@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createHoldEngine, HOLD_DURATION } from "@/mocks/hold-engine";
-import { getHold, validateHold, validateAcknowledgement, validateRelease } from "@/services/hold-service";
+import { getHold, validateHold, validateAcknowledgement, validateRelease } from "@/services/booking/hold-service";
 import { contextKey, holdReducer, holdState, normalizeMobile, remainingMs, validateGuest } from "@/features/booking/hold-state";
-import { validateSchedule } from "@/services/scheduling-service";
+import { validateSchedule } from "@/services/booking/scheduling-service";
 import { mockAvailability, mockOpenPlay } from "@/mocks/scheduling";
 
 const context = { facilityId: "rim-and-rally", sport: "pickleball", date: "2030-01-01", mode: "court" };
@@ -16,13 +16,12 @@ function fixture() {
 }
 
 describe("acknowledged temporary holds", () => {
-  it("rejects a recovery response for a different hold", async () => {
-    const { engine } = fixture();
-    const otherHold = await engine.create(input(8), options());
+  it("does not contact the removed hold recovery endpoint", async () => {
     vi.stubEnv("NEXT_PUBLIC_API_MODE", "http");
     vi.stubEnv("NEXT_PUBLIC_API_BASE_URL", "https://example.test/api");
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true, json: async () => otherHold }));
-    await expect(getHold("requested-hold", options())).rejects.toMatchObject({ code: "INVALID_RESPONSE" });
+    vi.stubGlobal("fetch", vi.fn());
+    await expect(getHold("requested-hold", options())).rejects.toMatchObject({ code: "TEMPORARILY_UNAVAILABLE" });
+    expect(fetch).not.toHaveBeenCalled();
   });
 
   it("creates a ten-minute hold using service pricing, with a valid quote", async () => {

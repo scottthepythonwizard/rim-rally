@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useRef } from "react";
-import { buttonClass } from "./ui";
+import { buttonClass } from "./primitives";
 
 export default function NoticeButton({ children, title = "Coming to the hub", message = "This feature is planned for a future release. Guest court booking is the focus of this frontend milestone.", className = "", plain = false }) {
   const dialog = useRef(null);

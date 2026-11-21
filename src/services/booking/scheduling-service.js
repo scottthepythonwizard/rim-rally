@@ -1,5 +1,5 @@
 import { mockAvailability, mockOpenPlay } from "@/mocks/scheduling";
-import { ApiError, getJson } from "./api-client";
+import { ApiError, getJson } from "@/services/http/api-client";
 import { atHour, validDate } from "@/features/booking/scheduling";
 import { getBrowserHoldEngine } from "@/mocks/hold-engine";
 
@@ -39,7 +39,7 @@ export function validateSchedule(data, mode) {
  */
 export async function getSchedule(query, { mode = "court", signal, credential } = {}) {
   let data;
-  if (process.env.NEXT_PUBLIC_API_MODE === "http") {
+  if (process.env.NEXT_PUBLIC_API_MODE !== "mock") {
     const params = new URLSearchParams({ facilityId: query.facilityId, sport: query.sport, date: query.date });
     data = await getJson(`/${mode === "court" ? "availability" : "open-play"}?${params}`, { signal, headers: credential ? { "X-Guest-Recovery": credential } : {} });
   } else {

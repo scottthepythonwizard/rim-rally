@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { canShowConfirmation } from "@/features/checkout/payment-contract";
-import { getPaymentMethods, getPaymentPreview, validatePaymentAttempt } from "@/services/payment-service";
+import { getPaymentMethods, getPaymentPreview, validatePaymentAttempt } from "@/services/payments/payment-service";
 import { PAYMENT_SCENARIOS } from "@/mocks/payments";
 
 describe("Phase 4 contract foundation", () => {

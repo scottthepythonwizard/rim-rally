@@ -38,7 +38,7 @@ test("Phase 5: calendar, guest form, payment dialog and pass accessibility", asy
   await page.setViewportSize({ width: 390, height: 844 }); await page.emulateMedia({ media: "print" });
   await expect(page.locator("header")).toBeHidden(); await expect(page.locator("footer")).toBeHidden();
   expect(await page.getByLabel("Digital booking pass").evaluate((el) => el.getBoundingClientRect().height)).toBeLessThan(1016);
-  await page.screenshot({ path: "docs/screenshots/phase-5-print-layout.jpg", fullPage: true });
+  await page.screenshot({ path: test.info().outputPath("phase-5-print-layout.jpg"), fullPage: true });
 });
 
 test("Phase 5: missing resources and unauthorised pass never expose a ticket", async ({ page }) => {

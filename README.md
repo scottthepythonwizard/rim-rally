@@ -1,12 +1,17 @@
 # Rim & Rally
 
-Court booking prototype built with Next.js App Router and Tailwind CSS. Guest scheduling and checkout use mocks. Staff accounts and schedules use SQLite.
+See [frontend structure and contribution guide](docs/FRONTEND-STRUCTURE.md) for source folders, imports, tests and where to add new code.
 
-For the Django entry point, see [Run Rim & Rally through Django](docs/DJANGO.md).
+Local Django payment integration is implemented for review. See
+[payment integration, startup, verification and recovery](docs/PAYMENT-INTEGRATION.md).
+Set `NEXT_PUBLIC_BACKEND_ENABLED=1` before building to enable the connected screens;
+unset/0 retains the paused presentation. Nothing has been merged or deployed.
+
+Court booking app built with Next.js App Router, Tailwind CSS and a Django backend. Guest bookings, staff workflows, proof and schedules use the same Django records. SQLite is limited to local development; production requires the team's persistent database. The older milestone notes below describe historical/demo implementations.
 
 ## Run locally
 
-Prerequisite: Node.js 24. The staff dashboard uses Node’s built-in SQLite module.
+Prerequisites: Node.js 24 and the Django dependencies in `requirements.txt`. Follow PAYMENT-INTEGRATION.md for connected local startup. The steps below also support explicit frontend demos.
 
 1. Run `npm ci`.
 2. Run `npm run dev`.
@@ -47,7 +52,7 @@ See [roadmap](docs/ROADMAP.md) for progress and next tasks, [API contract](docs/
 
 `src/app/` contains Server Component route shells. `src/features/booking/` contains the small client booking boundary, presentational views, date helpers, and selection reducer. `src/services/` owns HTTP/mock adapters and validation. `src/mocks/` contains illustrative inventory and pricing. Components never query a database.
 
-Copy `.env.example` to `.env.local` if configuring a live service. `NEXT_PUBLIC_API_MODE=http` enables scheduling, hold, payment and booking HTTP adapters (provider QRPh/cancellation still require agreement); the default is mock. `NEXT_PUBLIC_API_BASE_URL` supplies the API base URL. Facility discovery remains mock-backed. Restart Next.js after environment changes. See the API contract for CORS and response requirements.
+Copy `.env.example` to `.env.local` if configuring a live service. `NEXT_PUBLIC_API_MODE=http` enables scheduling, hold, payment and booking HTTP adapters (provider QRPh/cancellation still require agreement); the default is shared server mode (`server`, API base `/api`). `NEXT_PUBLIC_API_BASE_URL` supplies the API base URL. Facility discovery remains mock-backed. Rebuild Next.js after changing public environment settings. See the API contract for CORS and response requirements.
 
 ## Design and scope
 

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import logo from "../images/logo.jpg";
+import logo from "@/assets/images/logo.jpg";
 
 export function BrandMark({ className = "h-12 w-12" }) {
   return (

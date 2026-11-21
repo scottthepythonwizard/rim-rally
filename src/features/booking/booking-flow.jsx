@@ -2,9 +2,9 @@
 
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { getSchedule } from "@/services/scheduling-service";
+import { getSchedule } from "@/services/booking/scheduling-service";
 import PaymentStatus from "@/features/checkout/payment-status";
-import { PAYMENT_RECOVERY } from "@/services/payment-operations";
+import { PAYMENT_RECOVERY } from "@/services/payments/payment-operations";
 import DateNavigation from "./date-navigation";
 import BookingMatrix, { SlotLegend } from "./booking-matrix";
 import OpenPlay from "./open-play";
@@ -13,6 +13,8 @@ import { addDays, manilaDate, money, normalizeOptions, selectable, toggleSlot, t
 import useHoldFlow from "./use-hold-flow";
 import HoldCountdown from "./hold-countdown";
 import GuestDetails, { GuestReview } from "./guest-details";
+import { bookingApiAvailable } from "@/config/backend";
+import { UnavailableNotice } from "@/components/ui/backend-unavailable";
 
 function requestReducer(state, action) {
   if (action.type === "LOADING") return { ...state, status: "loading", error: null };
@@ -21,7 +23,29 @@ function requestReducer(state, action) {
   return state;
 }
 
-export default function BookingFlow({ facility, serverNow }) {
+export default function BookingFlow(props) {
+  return bookingApiAvailable() ? <ActiveBookingFlow {...props} /> : <PausedBookingFlow {...props} />;
+}
+
+function PausedBookingFlow({ facility, serverNow }) {
+  const params = useSearchParams();
+  const today = manilaDate(serverNow);
+  const options = normalizeOptions(params, today);
+  return <div>
+    <fieldset disabled className="min-w-0">
+      <legend className="mb-3 text-[10px] tracking-widest uppercase">Choose your sport</legend>
+      <div className="flex flex-wrap gap-2">{facility.sports.map((sport) => <button key={sport} type="button" aria-pressed={options.sport === sport} className={`min-h-11 rounded-full border border-ink px-6 font-editorial text-xs capitalize disabled:opacity-50 ${options.sport === sport ? "bg-ink text-paper" : ""}`}>{sport}</button>)}</div>
+      <div className="mt-7 flex gap-6 border-b border-ink/15 font-editorial text-sm">{["Court reservation", "Open Play"].map((label) => <button key={label} type="button" className="min-h-12 py-3 disabled:opacity-50">{label}</button>)}</div>
+      <div className="mt-7"><DateNavigation date={options.date} today={today} onChange={() => {}} /></div>
+    </fieldset>
+    <div className="mt-7 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
+      <section><h2 className="font-editorial text-2xl">Court availability</h2><UnavailableNotice /></section>
+      <aside className="rounded-xl border border-ink/20 bg-tan/35 p-6"><h2 className="font-editorial text-2xl">Your selection</h2><p className="mt-4 text-sm">Reservations and checkout are temporarily unavailable.</p><button disabled className="mt-5 min-h-11 rounded-full bg-ink px-6 text-sm text-paper disabled:opacity-50">Continue to booking</button></aside>
+    </div>
+  </div>;
+}
+
+function ActiveBookingFlow({ facility, serverNow }) {
   const params = useSearchParams();
   const [draftPayment, setDraftPayment] = useState(undefined);
   const [draftGuest, setDraftGuest] = useState(undefined);
@@ -64,7 +88,7 @@ export default function BookingFlow({ facility, serverNow }) {
     <div className="mt-7"><DateNavigation date={options.date} today={today} onChange={(date) => change({ date })} /></div>
     <div className="mt-4 flex flex-wrap gap-2"><button onClick={() => change({ date: addDays(today, 1) })} className="min-h-11 rounded-full border border-ink/15 px-4 text-xs hover:bg-tan">Tomorrow</button><p className="flex items-center px-1 text-[11px] text-ink/60">Choose a date, then select a court and time.</p></div>
     <ScheduleScope key={scope} {...{ facility, options, change }} initialNow={clock} initialGuest={draftGuest} initialPayment={draftPayment} onCheckout={(record, input) => { setDraftGuest(input.guest); setDraftPayment(input); setCheckout({ record, input }); }} />
-    {process.env.NEXT_PUBLIC_API_MODE !== "http" && <details className="mt-10 border-t border-ink/15 pt-5 text-xs"><summary className="min-h-11 cursor-pointer py-3 text-ink/60">Demo availability scenarios</summary><label className="mt-3 flex flex-wrap items-center gap-3">Preview state<select aria-label="Demo scenario" value={options.scenario} onChange={(event) => change({ scenario: event.target.value })} className="min-h-11 rounded-lg border border-ink/20 bg-paper px-4">{[["normal", "Normal availability"], ["sold-out", "Fully booked"], ["empty", "No schedules"], ["error", "Service error"], ["slow", "Slow response"], ["malformed", "Unexpected response"]].map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><p className="mt-3 text-ink/60">Illustrative inventory and prices. These controls affect this preview only.</p></details>}
+    {process.env.NEXT_PUBLIC_API_MODE === "mock" && <details className="mt-10 border-t border-ink/15 pt-5 text-xs"><summary className="min-h-11 cursor-pointer py-3 text-ink/60">Demo availability scenarios</summary><label className="mt-3 flex flex-wrap items-center gap-3">Preview state<select aria-label="Demo scenario" value={options.scenario} onChange={(event) => change({ scenario: event.target.value })} className="min-h-11 rounded-lg border border-ink/20 bg-paper px-4">{[["normal", "Normal availability"], ["sold-out", "Fully booked"], ["empty", "No schedules"], ["error", "Service error"], ["slow", "Slow response"], ["malformed", "Unexpected response"]].map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><p className="mt-3 text-ink/60">Illustrative inventory and prices. These controls affect this preview only.</p></details>}
   </div>;
 }
 
@@ -161,7 +185,7 @@ function ScheduleScope({ facility, options, change, initialNow, onCheckout, init
       </PriceSummary>
     </div>
     {selectedCount > 0 && flow.step === "selection" && <div className="fixed inset-x-0 bottom-0 z-20 flex items-center justify-between gap-4 border-t border-ink/20 bg-paper px-5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:hidden"><p className="text-xs">{selectedCount} {selection.session ? "place" : selectedCount === 1 ? "hour" : "hours"}<span className="mt-1 block text-[10px] text-ink/60">Temporarily held</span></p><output aria-label="Mobile selection total" className="font-editorial text-xl">{money(amount)}</output><a href="#summary-title" className="rounded-full bg-ink px-5 py-3 text-xs text-paper">Review</a></div>}
-    {flow.hold && process.env.NEXT_PUBLIC_API_MODE !== "http" && <details className="mt-5 text-xs text-ink/65"><summary className="min-h-11 py-3">Demo hold controls</summary><button type="button" disabled={flow.busy} onClick={() => flow.expireDemo()} className="min-h-11 rounded-full border border-ink/30 px-5">Expire demo hold</button><p className="mt-3 leading-6">This hold is simulated in this browser. Cross-user locking needs the backend.</p></details>}
+    {flow.hold && process.env.NEXT_PUBLIC_API_MODE === "mock" && <details className="mt-5 text-xs text-ink/65"><summary className="min-h-11 py-3">Demo hold controls</summary><button type="button" disabled={flow.busy} onClick={() => flow.expireDemo()} className="min-h-11 rounded-full border border-ink/30 px-5">Expire demo hold</button><p className="mt-3 leading-6">This hold is simulated in this browser. Cross-user locking needs the backend.</p></details>}
   </>;
 }
 

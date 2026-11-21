@@ -1,8 +1,8 @@
 /* eslint-disable @next/next/no-img-element -- Local SVG placeholders; photography will be supplied by the user. */
 import Link from "next/link";
-import { BrandMark } from "./brand";
-import { Arrow, ButtonLink, Eyebrow } from "./ui";
-import NoticeButton from "./notice-button";
+import { BrandMark } from "@/components/layout/brand";
+import { Arrow, ButtonLink, Eyebrow } from "@/components/ui/primitives";
+import NoticeButton from "@/components/ui/notice-button";
 
 export function Hero() {
   return <section aria-labelledby="hero-title" className="relative isolate overflow-hidden bg-tan">

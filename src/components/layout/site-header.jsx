@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import Brand from "./brand";
-import { ButtonLink } from "./ui";
+import { ButtonLink } from "@/components/ui/primitives";
 import MobileMenu from "./mobile-menu";
 
 export default function SiteHeader() {

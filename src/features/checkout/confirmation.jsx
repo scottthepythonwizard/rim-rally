@@ -1,11 +1,19 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { getBooking, PAYMENT_RECOVERY } from "@/services/payment-operations";
+import { getBooking, PAYMENT_RECOVERY } from "@/services/payments/payment-operations";
 import { formatDay, formatTime, money } from "@/features/booking/scheduling";
 import TicketQR from "./ticket-qr";
+import GuestManagement from "./guest-management";
+import { bookingApiAvailable } from "@/config/backend";
+import { UnavailableNotice } from "@/components/ui/backend-unavailable";
 
-export default function Confirmation({ bookingId }) {
+export default function Confirmation(props) {
+  if (!bookingApiAvailable()) return <section className="mx-auto max-w-3xl px-5 py-12 md:py-20"><h1 className="font-editorial text-4xl">Booking pass</h1><UnavailableNotice /><button disabled className="min-h-11 rounded-full bg-ink px-6 text-sm text-paper disabled:opacity-50">Print / Save as PDF</button></section>;
+  return <ActiveConfirmation {...props} />;
+}
+
+function ActiveConfirmation({ bookingId }) {
   const [booking, setBooking] = useState(null), [failure, setFailure] = useState(null), [retry, setRetry] = useState(0);
   const error = failure?.id === bookingId ? failure.message : "";
   const [readyToken, setReadyToken] = useState(null);
@@ -26,7 +34,7 @@ export default function Confirmation({ bookingId }) {
   const start = booking.session?.startAt || booking.slots[0].startAt;
   const end = booking.session?.endAt || booking.slots.at(-1).endAt;
   const court = booking.session?.courtName || booking.courtName;
-  const demo = process.env.NEXT_PUBLIC_API_MODE !== "http";
+  const demo = process.env.NEXT_PUBLIC_API_MODE === "mock";
   return <section className="mx-auto max-w-3xl px-5 py-12 md:py-20">
     <div className="no-print mb-8"><p className="text-[10px] tracking-widest uppercase">Your next game is booked</p><h1 className="mt-3 font-editorial text-4xl">See you on court.</h1><p className="mt-4 text-sm leading-7">{demo ? "Demo booking confirmed. No payment was collected. This pass is not valid for admission." : "Keep your digital pass for check-in."}</p></div>
     <article aria-label="Digital booking pass" className="digital-pass break-inside-avoid rounded-2xl border border-ink/30 bg-white p-6 md:p-10"><p className="text-xs tracking-widest uppercase">Rim & Rally Sports Hub</p><h2 className="mt-3 font-editorial text-3xl">{demo ? "Demonstration pass" : "Digital pass"}</h2><p className="mt-3 break-all font-mono text-lg">{booking.reference}</p>
@@ -34,5 +42,6 @@ export default function Confirmation({ bookingId }) {
       <div className="mt-6"><TicketQR key={booking.ticketToken} token={booking.ticketToken} onReady={ready} /><p className="mt-2 text-center text-[10px]">{demo ? "DEMO ONLY · Not valid for entry" : "Present at check-in · verification required"}</p></div>
     </article>
     <div className="no-print mt-6 flex flex-wrap gap-3"><button disabled={readyToken !== booking.ticketToken} onClick={() => window.print()} className="min-h-11 rounded-full bg-ink px-6 font-editorial text-xs text-paper">Print / Save as PDF</button><Link href="/" className="flex min-h-11 items-center rounded-full border border-ink px-6 text-xs">Back to home</Link><Link href="/book/rim-and-rally" onClick={() => sessionStorage.removeItem(PAYMENT_RECOVERY)} className="flex min-h-11 items-center px-4 text-xs underline">Book another game</Link></div>
+    {!demo && process.env.NEXT_PUBLIC_API_MODE !== "http" && <GuestManagement bookingId={booking.id} />}
   </section>;
 }

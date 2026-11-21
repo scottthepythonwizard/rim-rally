@@ -1,4 +1,4 @@
-import { ApiError, requestJson } from "./api-client";
+import { ApiError, requestJson } from "@/services/http/api-client";
 import { getBrowserHoldEngine } from "@/mocks/hold-engine";
 import { atHour, validDate } from "@/features/booking/scheduling";
 
@@ -28,7 +28,7 @@ export function validateHold(hold) {
 }
 
 async function holdRequest(operation, id, input, options) {
-  if (process.env.NEXT_PUBLIC_API_MODE !== "http") {
+  if (process.env.NEXT_PUBLIC_API_MODE === "mock") {
     await new Promise((resolve) => setTimeout(resolve, 180));
     const engine = getBrowserHoldEngine();
     return operation === "create" ? engine.create(input, options) : operation === "update" ? engine.update(id, input, options) : engine[operation](id, options);
@@ -53,6 +53,6 @@ export function validateRelease(result) {
 }
 export async function releaseHold(id, options) { return validateRelease(await holdRequest("release", id, null, options)); }
 export async function expireDemoHold(id, options) {
-  if (process.env.NEXT_PUBLIC_API_MODE === "http") throw new ApiError("DEMO_ONLY", "This action is only available in mock mode.");
+  if (process.env.NEXT_PUBLIC_API_MODE !== "mock") throw new ApiError("DEMO_ONLY", "This action is only available in mock mode.");
   return getBrowserHoldEngine().expire(id, options);
 }

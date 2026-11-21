@@ -54,6 +54,51 @@ export function db() {
       starts TEXT NOT NULL, ends TEXT NOT NULL, capacity INTEGER NOT NULL, amount INTEGER NOT NULL,
       status TEXT NOT NULL DEFAULT 'active', version INTEGER NOT NULL DEFAULT 1
     );
+    CREATE TABLE IF NOT EXISTS customers (
+      id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL, mobile TEXT NOT NULL,
+      UNIQUE(email, mobile)
+    );
+    CREATE TABLE IF NOT EXISTS booking_holds (
+      id TEXT PRIMARY KEY, owner TEXT NOT NULL, payload TEXT NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS booking_requests (
+      owner TEXT NOT NULL, key TEXT NOT NULL, fingerprint TEXT NOT NULL, hold_id TEXT NOT NULL,
+      PRIMARY KEY(owner, key)
+    );
+    CREATE TABLE IF NOT EXISTS bookings (
+      id TEXT PRIMARY KEY, hold_id TEXT UNIQUE NOT NULL REFERENCES booking_holds(id),
+      customer_id TEXT NOT NULL REFERENCES customers(id), type TEXT NOT NULL, court TEXT NOT NULL,
+      session_id TEXT, starts TEXT NOT NULL, ends TEXT NOT NULL, amount INTEGER NOT NULL,
+      status TEXT NOT NULL, source TEXT NOT NULL, created TEXT NOT NULL, ticket TEXT NOT NULL,
+      created_by TEXT REFERENCES accounts(id)
+    );
+    CREATE TABLE IF NOT EXISTS booking_payments (
+      id TEXT PRIMARY KEY, booking_id TEXT UNIQUE NOT NULL REFERENCES bookings(id),
+      method TEXT NOT NULL, status TEXT NOT NULL, key TEXT NOT NULL, owner TEXT NOT NULL,
+      reviewed_by TEXT REFERENCES accounts(id), reviewed TEXT, reason TEXT NOT NULL DEFAULT '',
+      UNIQUE(owner, key)
+    );
+    CREATE TABLE IF NOT EXISTS payment_proofs (
+      id TEXT PRIMARY KEY, payment_id TEXT NOT NULL REFERENCES booking_payments(id),
+      name TEXT NOT NULL, mime TEXT NOT NULL, content BLOB NOT NULL, submitted TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'submitted', reason TEXT NOT NULL DEFAULT '',
+      reviewed_by TEXT REFERENCES accounts(id), reviewed TEXT
+    );
+    CREATE TABLE IF NOT EXISTS booking_cancellations (
+      id TEXT PRIMARY KEY, booking_id TEXT UNIQUE NOT NULL REFERENCES bookings(id),
+      reason TEXT NOT NULL, requested TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'requested',
+      refund_status TEXT NOT NULL DEFAULT 'not_required', decision TEXT NOT NULL DEFAULT '',
+      processed_by TEXT REFERENCES accounts(id), processed TEXT
+    );
+    CREATE TABLE IF NOT EXISTS booking_audit (
+      id TEXT PRIMARY KEY, booking_id TEXT NOT NULL REFERENCES bookings(id),
+      actor_id TEXT REFERENCES accounts(id), action TEXT NOT NULL, at TEXT NOT NULL, note TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS bookings_customer ON bookings(customer_id,created);
+    CREATE INDEX IF NOT EXISTS bookings_session ON bookings(session_id);
+    CREATE INDEX IF NOT EXISTS bookings_starts ON bookings(starts);
+    CREATE INDEX IF NOT EXISTS proofs_payment ON payment_proofs(payment_id,submitted);
+    CREATE INDEX IF NOT EXISTS holds_owner ON booking_holds(owner);
   `);
   connection = database;
   return database;

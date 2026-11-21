@@ -147,9 +147,9 @@ test("guest details remain readable across supported widths", async ({ page }) =
     await page.setViewportSize({ width, height: 1000 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await expect(page.getByLabel("Full name", { exact: false })).toBeVisible();
-    if (width === 390) await page.screenshot({ path: "docs/screenshots/phase-3-mobile.jpg", fullPage: true });
+    if (width === 390) await page.screenshot({ path: test.info().outputPath("phase-3-mobile.jpg"), fullPage: true });
   }
   await page.getByRole("button", { name: "Review reservation", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Your game is taking shape.", exact: true })).toBeVisible();
-  await page.screenshot({ path: "docs/screenshots/phase-3-review.jpg", fullPage: true });
+  await page.screenshot({ path: test.info().outputPath("phase-3-review.jpg"), fullPage: true });
 });

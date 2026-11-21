@@ -1,11 +1,11 @@
-import { requestJson, ApiError } from "./api-client";
+import { requestJson, ApiError } from "@/services/http/api-client";
 import { getBrowserHoldEngine } from "@/mocks/hold-engine";
 import { validatePaymentAttempt } from "./payment-service";
 import { atHour, validDate } from "@/features/booking/scheduling";
 
 const guestNames = new Map();
 export const PAYMENT_RECOVERY = "rim-rally:payment-recovery:v1";
-const http = () => process.env.NEXT_PUBLIC_API_MODE === "http";
+const http = () => process.env.NEXT_PUBLIC_API_MODE !== "mock";
 const headers = (o) => ({ "X-Guest-Recovery": o.credential, ...(o.idempotencyKey ? { "Idempotency-Key": o.idempotencyKey } : {}) });
 export async function submitPayment(input, options) {
   if (!http()) guestNames.set(input.holdId, input.guest.name.trim());

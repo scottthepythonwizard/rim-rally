@@ -1,12 +1,14 @@
 import { expect, test } from "@playwright/test";
 
-test("failed staff login keeps the email available for correction", async ({ page }) => {
+test("staff login is visibly paused and makes no API requests", async ({ page }) => {
+  const requests = [];
+  page.on("request", (request) => { if (new URL(request.url()).pathname.startsWith("/api/")) requests.push(request.url()); });
   await page.goto("/login");
-  await page.getByLabel("Email address").fill("audit-login@example.test");
-  await page.getByLabel("Password", { exact: true }).fill("Test-only incorrect password!");
-  await page.getByRole("main").getByRole("button", { name: "Log in", exact: true }).click();
-  await expect(page.getByRole("main").getByRole("alert")).toContainText("Email or password is incorrect.");
-  await expect(page.getByLabel("Email address")).toHaveValue("audit-login@example.test");
+  await expect(page.getByText("Temporarily unavailable", { exact: true })).toBeVisible();
+  await expect(page.getByLabel("Email address")).toBeDisabled();
+  await expect(page.getByLabel("Password", { exact: true })).toBeDisabled();
+  await expect(page.getByRole("main").getByRole("button", { name: "Log in", exact: true })).toBeDisabled();
+  expect(requests).toEqual([]);
 });
 
 test("invalid wallet details return focus and clear the error when corrected", async ({ page }) => {

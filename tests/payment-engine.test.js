@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createHoldEngine, HOLD_DURATION } from "@/mocks/hold-engine";
-import { validateBooking } from "@/services/payment-operations";
+import { validateBooking } from "@/services/payments/payment-operations";
 import { canShowConfirmation } from "@/features/checkout/payment-contract";
 
 async function fixture() {

@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import { getFacility } from "@/services/facility-service";
-import { Eyebrow } from "@/components/ui";
+import { getFacility } from "@/services/facilities/facility-service";
+import { Eyebrow } from "@/components/ui/primitives";
 import BookingFlow, { ScheduleSkeleton } from "@/features/booking/booking-flow";
 
 export const metadata = { title: "Book a court" };
