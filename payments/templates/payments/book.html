@@ -1,0 +1,3 @@
+{% extends 'payments/base.html' %}{% block content %}<h1>Book a court or Open Play</h1><p>You can browse without signing in. Sign in to reserve a slot and pay. Prices and availability are checked when you proceed.</p>
+<form method="post">{% csrf_token %}{{ form.as_p }}<button>Proceed to payment</button></form>
+<h2>Upcoming Open Play</h2><ul>{% for session in sessions %}<li>{{ session.name }} — {{ session.court }} — {{ session.starts_at }} to {{ session.ends_at }} (Asia/Manila). Capacity: {{ session.capacity }}.</li>{% empty %}<li>No Open Play sessions published.</li>{% endfor %}</ul>{% endblock %}
