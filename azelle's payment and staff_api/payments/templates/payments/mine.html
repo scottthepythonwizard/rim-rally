@@ -1,0 +1,1 @@
+{% extends 'payments/base.html' %}{% block content %}<h1>My bookings</h1><ul>{% for booking in bookings %}<li><a href="{% url 'payments:detail' booking.id %}">{{ booking.court }} — {{ booking.starts_at }}</a> — {{ booking.get_status_display }} — PHP {{ booking.pesos }}</li>{% empty %}<li>No bookings yet.</li>{% endfor %}</ul>{% endblock %}

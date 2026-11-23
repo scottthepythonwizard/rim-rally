@@ -1,0 +1,241 @@
+{
+  "purpose": "Payment and staff integration handoff; not a standalone Django project",
+  "files": [
+    {
+      "path": ".env.django.example",
+      "sha256": "c87cb244108514ff17b820fc33dfe65500a11693d0b10aec1ac9863a34c51cb3"
+    },
+    {
+      "path": "docs/PAYMENT-INTEGRATION.md",
+      "sha256": "1cedd9250c8a2a4ee014071939fff287d7c5fa1951748ff2a471c82a719ce3f0"
+    },
+    {
+      "path": "host-reference/settings.py",
+      "sha256": "2a02f23f1217e89cb96f6f6bff7cb97b228db142284dfaadb22c568e5914fc72"
+    },
+    {
+      "path": "host-reference/urls.py",
+      "sha256": "c34700971b0116e6172767e272bee60d6c8eca6676fd79f9bfd776993faa4d10"
+    },
+    {
+      "path": "payments/__init__.py",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "path": "payments/admin.py",
+      "sha256": "4e45cd89124189e5aa117cf29b4e4d4ef9bf7925f10599b510ad33056d1e7dc4"
+    },
+    {
+      "path": "payments/apps.py",
+      "sha256": "4357bc9626e1ed75fa674755108dcdd275f27e2c473e4384ff38249acd03d694"
+    },
+    {
+      "path": "payments/forms.py",
+      "sha256": "ea3a6f5eb4e95c641001dd232701252a66c4652616c4ecd8f993f96511e6f607"
+    },
+    {
+      "path": "payments/images.py",
+      "sha256": "d2bb0edde41c5ad90674d2e95e1d785032b566b00eb233912af94c2f959ed72f"
+    },
+    {
+      "path": "payments/management/__init__.py",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "path": "payments/management/commands/__init__.py",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "path": "payments/management/commands/expire_bookings.py",
+      "sha256": "d621d4e6e116033f54e64e2ac736b58f5927f40d2790521aabca2da6b32799ac"
+    },
+    {
+      "path": "payments/management/commands/seed_payment_courts.py",
+      "sha256": "26542107c5c1a0802b359b120adcee183b5893844dd7df16aa24819fb10bea66"
+    },
+    {
+      "path": "payments/management/commands/send_payment_emails.py",
+      "sha256": "30f96bfeb34bb786ebaf683eeebdc8d02e919b8c0f49fc6999e3ec6683437453"
+    },
+    {
+      "path": "payments/migrations/0001_initial.py",
+      "sha256": "03ef1e1817112324b4c2fb07857f50cf98a77fceeaebb5724be7e501ef1e1fa4"
+    },
+    {
+      "path": "payments/migrations/0002_email_delivery_leases.py",
+      "sha256": "ac41fa5cb58ff489a6d89c69dd0ad5a6b4ad87b40da64a15e99f8c1adfc749bd"
+    },
+    {
+      "path": "payments/migrations/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "payments/models.py",
+      "sha256": "a36bb2f1ac3ae1d6eab4e7974ca29579ed60e3597eb7bd46c508ad3e624acc4b"
+    },
+    {
+      "path": "payments/permissions.py",
+      "sha256": "71ea9a12bc5d9f26b85584c1ed500f4931f4f9b893698a01363c2e44b5be9eb3"
+    },
+    {
+      "path": "payments/rest_api.py",
+      "sha256": "fa8cefb478024ccb83d3109827b114deb995c25c067aa832849c23e1fa9158fc"
+    },
+    {
+      "path": "payments/rest_urls.py",
+      "sha256": "d30b5e646027b59bf32f877e0323e37538e25d9dd3b3f11a46a2e912e6a4c7cd"
+    },
+    {
+      "path": "payments/serializers.py",
+      "sha256": "d336f1c95a73fe94dcd7b08b17301a1e8d3205baced8d48513391603dfb93494"
+    },
+    {
+      "path": "payments/services.py",
+      "sha256": "7222dc02d7db584287552d1cb90392421371dfbb0c5d5d832b36bcada237048c"
+    },
+    {
+      "path": "payments/templates/admin/payments/review.html",
+      "sha256": "2f8934a8798b5df7ee42cade36c66e945f009e055442e08d7c262990bd6f445c"
+    },
+    {
+      "path": "payments/templates/payments/base.html",
+      "sha256": "3afe6742165769f12d7ac96a8e0b4fe5841e81db1e00af37a4a5afe9cefd42e6"
+    },
+    {
+      "path": "payments/templates/payments/book.html",
+      "sha256": "affbe105a11c360e97028a5bfa0ee29febb2a026f0c682a211c5a7c52392970c"
+    },
+    {
+      "path": "payments/templates/payments/detail.html",
+      "sha256": "2ef5eb7b99335d6496bdf06a905141d881e52171079075bc3f3ff1394c210ed5"
+    },
+    {
+      "path": "payments/templates/payments/form.html",
+      "sha256": "f15b326111baa263a73b54aa8522f18d286b7891dc8e621bfae710c7e6abc8c1"
+    },
+    {
+      "path": "payments/templates/payments/login.html",
+      "sha256": "826236b2a8fee363e642a92cfb6b4379b090721ad232113de04ef8b485212c07"
+    },
+    {
+      "path": "payments/templates/payments/mine.html",
+      "sha256": "87fe8fd1cd58e2a2038ac8e5b97c47c15395aec0312a1e61370d48e2d16c3a33"
+    },
+    {
+      "path": "payments/test_guard.py",
+      "sha256": "5e4f6d72b6945c3934e69a50fbd2268ac818b60f48ec134d380bad2eb20b6b2a"
+    },
+    {
+      "path": "payments/test_rest.py",
+      "sha256": "8c48a8715d65e83222640ba5ca2d53115f7a003b9d038a6a20f32a679e42a762"
+    },
+    {
+      "path": "payments/tests.py",
+      "sha256": "bcd8715f1a543dc0d079bf830e3c1dec41621c9a683db920d91c5308d6a33fda"
+    },
+    {
+      "path": "payments/urls.py",
+      "sha256": "2892ebe3677dede5cde77a9199a4b87749fde65c115643d7781ddf1f6b088b8f"
+    },
+    {
+      "path": "payments/views.py",
+      "sha256": "b8596af5363b75b739323640e1558f3d71fa5ce138610a64aaed19b24469ca08"
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "4f431421174b345e86b2fe887e47a70a7ac5f0145ce481283d1eb2de9b4e8a91"
+    },
+    {
+      "path": "staff_api/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "staff_api/api.py",
+      "sha256": "4b7eb0970710a179e8cac0e0d358b322f1bee4aa13978c25a1e530cba0331fb9"
+    },
+    {
+      "path": "staff_api/apps.py",
+      "sha256": "29a2d541e0044b1d34f87a277b41bb4f9d9939710fdc596fe2f3744b537807b1"
+    },
+    {
+      "path": "staff_api/auth.py",
+      "sha256": "4b9243bf3882a00ab5e27a482f8d52b263e9783c9e4f4e560118a9bb758fd2f2"
+    },
+    {
+      "path": "staff_api/data.py",
+      "sha256": "cd8ed8ff1ec84b7cba54236b6b7413e70e8a11d56ce1b542306c572ca77973c3"
+    },
+    {
+      "path": "staff_api/domain.py",
+      "sha256": "e0834542b4214945612bef5100f3ae1653892f5b4e851affa4d3f3446faaf4b1"
+    },
+    {
+      "path": "staff_api/hashers.py",
+      "sha256": "9ba366d4a1619eb609d088d78a120ee7310c56d3bf5d95950719b7f62c8bdccc"
+    },
+    {
+      "path": "staff_api/legacy.py",
+      "sha256": "9b2db6fb95034d86c9a9cd3abf10fb0646964eae56a4ce11cd9e462f61fb9b6d"
+    },
+    {
+      "path": "staff_api/management/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "staff_api/management/commands/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "staff_api/management/commands/bootstrap_staff.py",
+      "sha256": "5d736e7abe1a20afd5c38a4ecb7e1c0c06cd6e11e59667d37d917f8a72d3539c"
+    },
+    {
+      "path": "staff_api/management/commands/import_legacy_staff.py",
+      "sha256": "d43fe9a22c8dbad1dffba2f2ec4c798ecfd1eb18a14245f20188751506409786"
+    },
+    {
+      "path": "staff_api/management/commands/prepare_integration_demo.py",
+      "sha256": "d5ea7202aa4f88c3e0efc55b5e57d745b23864a7d3918b70cfd53f239c23aa8a"
+    },
+    {
+      "path": "staff_api/management/commands/seed_frontend_courts.py",
+      "sha256": "fc681da589c28b581eca1c5c0fb626b4da9393d991b9034b8491c084aedfe22c"
+    },
+    {
+      "path": "staff_api/migrations/0001_initial.py",
+      "sha256": "df2d00e4843b9e70672335c3bccbb9384b772407b78677cfc57eab60b10d4d0f"
+    },
+    {
+      "path": "staff_api/migrations/0002_scheduleidentity_archived.py",
+      "sha256": "f84748efba276ba61f2598874762f2922448ad4c07613fa69cd5cfdefac85e8d"
+    },
+    {
+      "path": "staff_api/migrations/0003_remove_customerprofile_staff_customer_contact_and_more.py",
+      "sha256": "ea422de19ab469739b145cc8ea8357eea51324b212cb6385e51eb44316d6195f"
+    },
+    {
+      "path": "staff_api/migrations/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "staff_api/models.py",
+      "sha256": "2c39c3f99ea8b0904f4c0c0457db775466a7a2dae40efd3d990c6a0c658e8913"
+    },
+    {
+      "path": "staff_api/test_integration.py",
+      "sha256": "2651d6b81c3dc4e8b0bdfe9faba4244a75b648896b24cf26039af1fd4f464d40"
+    },
+    {
+      "path": "staff_api/tests.py",
+      "sha256": "f72919657fcd01886c1889541d790ddba90b4aff8fbecbd92a3b11377211cd69"
+    },
+    {
+      "path": "staff_api/urls.py",
+      "sha256": "3da5db7a3908d231f6822efaad6cc61a5e341fea03520444d0aab740d121ebd1"
+    },
+    {
+      "path": "README.md",
+      "sha256": "1c51c6b2b3e3ff848227e8a2834a8910246f331efcb5ca4cbfbc175af1dfcec8"
+    }
+  ]
+}

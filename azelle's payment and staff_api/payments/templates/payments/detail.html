@@ -1,0 +1,15 @@
+{% extends 'payments/base.html' %}{% block content %}
+<h1>{{ booking.get_status_display }}</h1><p>Booking: {{ booking.id }}<br>{{ booking.court }}{% if booking.play_session %} — Open Play: {{ booking.play_session.name }}{% else %} — Court rental{% endif %}<br>{{ booking.starts_at }} to {{ booking.ends_at }} (Asia/Manila)</p>
+<h2>Total: PHP {{ booking.pesos }}</h2>
+{% if booking.status == 'awaiting_payment' %}
+<p>Pay before <strong>{{ booking.expires_at }}</strong> (Asia/Manila). If this deadline has passed, refresh this page and contact the owner if you already sent money.</p>
+<p>{{ booking.destination_label }}<br>Account owner: {{ booking.payee }}<br>Account: {{ booking.account }}</p>
+<img class="qr" src="{% url 'payments:qr' booking.id %}" alt="Owner's payment QR code"><p>Verify the recipient in your wallet or bank app before paying. Then upload your receipt below.</p>
+<form method="post" enctype="multipart/form-data">{% csrf_token %}{{ form.as_p }}<button>Submit proof of payment</button></form>
+<form method="post" action="{% url 'payments:cancel' booking.id %}">{% csrf_token %}<p><button>Cancel unpaid booking</button></p></form>
+{% elif booking.status == 'pending_verification' %}<p>Your receipt was received. Staff will check the actual payment account. Your booking is pending verification until {{ booking.expires_at }}. Refresh this page for updates.</p>
+{% elif booking.status == 'confirmed' %}<p>Your payment has been verified and your booking is confirmed. {% if booking.confirmationemail.sent_at %}A confirmation email was sent to {{ booking.customer_email }}.{% else %}A confirmation email is queued for {{ booking.customer_email }}.{% endif %}</p>
+{% else %}<p>This booking no longer holds the slot. If you sent money, contact the owner with this booking ID and your transfer reference for reconciliation or a refund. Do not pay again automatically.</p>{% endif %}
+{% if booking.receipt %}<p><a href="{% url 'payments:receipt' booking.id %}">View submitted receipt</a></p>{% endif %}
+{% if booking.review %}<p>Staff review: {{ booking.review.note }}</p>{% endif %}
+{% endblock %}

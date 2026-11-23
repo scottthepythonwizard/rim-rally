@@ -1,0 +1,1 @@
+{% extends 'payments/base.html' %}{% block content %}<h1>Customer sign in</h1><p>Use your registered email as your username.</p><form method="post">{% csrf_token %}{{ form.as_p }}<input type="hidden" name="next" value="{{ next }}"><button>Sign in</button></form><p><a href="{% url 'payments:signup' %}?next={{ next|urlencode }}">Create an account</a></p>{% endblock %}
