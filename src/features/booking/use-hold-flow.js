@@ -17,7 +17,7 @@ function readRecovery() {
   } catch { throw new ApiError("STORAGE_ERROR", "This browser could not read your hold recovery information. Enable session storage before continuing."); }
 }
 
-export default function useHoldFlow(context, onChanged, initialGuest) {
+export default function useHoldFlow(context, onChanged, initialGuest, enabled) {
   const [state, dispatch] = useReducer(holdReducer, holdState);
   const [remaining, setRemaining] = useState(0);
   const [guest, setGuest] = useState(initialGuest || blankGuest);
@@ -101,6 +101,7 @@ export default function useHoldFlow(context, onChanged, initialGuest) {
   }, [key, execute, accept, save, expire, onChanged]);
 
   useEffect(() => {
+    if (!enabled) return;
     active.current = true;
     void recover("Your temporary hold was recovered. Re-enter your guest details to continue.");
     const visibility = () => {
@@ -113,7 +114,7 @@ export default function useHoldFlow(context, onChanged, initialGuest) {
     window.addEventListener("focus", check); window.addEventListener("online", check); window.addEventListener("storage", storage);
     document.addEventListener("visibilitychange", visibility);
     return () => { active.current = false; clearInterval(interval); window.removeEventListener("focus", check); window.removeEventListener("online", check); window.removeEventListener("storage", storage); document.removeEventListener("visibilitychange", visibility); };
-  }, [recover, onChanged]);
+  }, [enabled, recover, onChanged]);
 
   useEffect(() => {
     const tick = setInterval(() => {
@@ -194,5 +195,5 @@ export default function useHoldFlow(context, onChanged, initialGuest) {
     await expireDemoHold(acknowledged.current.id, { credential: recovery.current.credential }); await recover();
   }
 
-  return { ...state, remaining, guest, setGuest, fieldErrors, setFieldErrors, mutate, cancel, recover, enterDetails, reviewGuest, expireDemo, back: (step) => dispatch({ type: "STEP", step }), busy: ["recovering", "securing", "uncertain"].includes(state.status), canContinue: state.status === "held" && state.verified && remaining > 0 };
+  return { ...state, remaining, guest, setGuest, fieldErrors, setFieldErrors, mutate, cancel, recover, enterDetails, reviewGuest, expireDemo, back: (step) => dispatch({ type: "STEP", step }), busy: enabled && ["recovering", "securing", "uncertain"].includes(state.status), canContinue: state.status === "held" && state.verified && remaining > 0 };
 }

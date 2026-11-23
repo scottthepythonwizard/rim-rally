@@ -43,6 +43,17 @@ describe("schedule service boundaries", () => {
     await expect(getSchedule({ ...query, scenario: "error" })).rejects.toMatchObject({ code: "DEMO_UNAVAILABLE" });
     await expect(getSchedule({ ...query, scenario: "malformed" })).rejects.toMatchObject({ code: "INVALID_RESPONSE" });
   });
+  it("reads the live schedule without enabling booking operations", async () => {
+    vi.stubEnv("NEXT_PUBLIC_BACKEND_ENABLED", undefined);
+    vi.stubEnv("NEXT_PUBLIC_API_MODE", "server");
+    vi.stubEnv("NEXT_PUBLIC_API_BASE_URL", "/api");
+    const response = { facilityId: query.facilityId, sport: query.sport, date: query.date, serverNow: "2030-01-01T08:00:00+08:00", courts: [] };
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(Response.json(response)));
+    await expect(getSchedule(query)).resolves.toEqual(response);
+    expect(fetch).toHaveBeenCalledWith("/api/availability?facilityId=rim-and-rally&sport=pickleball&date=2030-01-01", expect.objectContaining({ method: "GET" }));
+    await expect(getJson("/holds/example")).rejects.toMatchObject({ code: "TEMPORARILY_UNAVAILABLE" });
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
   it("blocks HTTP reads immediately while integration is paused", async () => {
     vi.stubGlobal("fetch", vi.fn());
     await expect(getJson("/availability")).rejects.toMatchObject({ code: "TEMPORARILY_UNAVAILABLE", message: "Temporarily unavailable" });

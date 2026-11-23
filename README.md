@@ -4,12 +4,32 @@ See [frontend structure and contribution guide](docs/FRONTEND-STRUCTURE.md) for 
 
 Local Django payment integration is implemented for review. See
 [payment integration, startup, verification and recovery](docs/PAYMENT-INTEGRATION.md).
-Set `NEXT_PUBLIC_BACKEND_ENABLED=1` before building to enable the connected screens;
-unset/0 retains the paused presentation. Nothing has been merged or deployed.
+The public schedule uses Django by default. Set `DJANGO_API_BASE_URL` to the Django API base (including `/api`).
+Set `NEXT_PUBLIC_BACKEND_ENABLED=1` before building to also enable checkout and staff screens,
+or set it to `0` to pause all connected screens.
 
 Court booking app built with Next.js App Router, Tailwind CSS and a Django backend. Guest bookings, staff workflows, proof and schedules use the same Django records. SQLite is limited to local development; production requires the team's persistent database. The older milestone notes below describe historical/demo implementations.
 
 ## Run locally
+
+For a local demo, run `npm ci`, then `python -m venv .venv` and
+`.venv\Scripts\python.exe -m pip install -r requirements.txt` on Windows. Run
+`npm run demo` and open `http://127.0.0.1:3030`. For Open Play, choose tomorrow or
+one of the following six days. Staff can sign in with `integration-admin@example.test`
+and `Integration-test-only!9331`. Demo checkout shows a non-payable QR. The demo
+uses a separate SQLite database at `.rim-rally/demo/integration-demo.sqlite3`.
+
+For team backend testing, stop the demo with Ctrl+C. Set
+`NEXT_PUBLIC_API_MODE=server`, `NEXT_PUBLIC_API_BASE_URL=/api`,
+`NEXT_PUBLIC_BACKEND_ENABLED=1`, and `DJANGO_API_BASE_URL` to the team's development
+API base ending in `/api`. Set `STAFF_APP_ORIGIN=http://127.0.0.1:3000` on the
+frontend and configure the same trusted frontend origin on Django. Then run
+`npm run dev` and open `http://127.0.0.1:3000`. Use team development credentials.
+Errors from this backend are shown in the UI without loading demo data.
+
+To return to the schedule-only setup, stop the demo, unset
+`NEXT_PUBLIC_BACKEND_ENABLED`, and run `npm run dev` with the intended Django API
+URL. The `npm run demo` command remains available for future testing.
 
 Prerequisites: Node.js 24 and the Django dependencies in `requirements.txt`. Follow PAYMENT-INTEGRATION.md for connected local startup. The steps below also support explicit frontend demos.
 

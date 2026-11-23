@@ -1,4 +1,4 @@
-import { STAFF_API_AVAILABLE, UNAVAILABLE_MESSAGE } from "@/config/backend";
+import { isScheduleRead, scheduleAvailable, STAFF_API_AVAILABLE, UNAVAILABLE_MESSAGE } from "@/config/backend";
 
 export class ApiError extends Error {
   constructor(code, message, { fieldErrors = {}, retryable = false, requestId } = {}) {
@@ -19,7 +19,9 @@ export function normalizeError(body, status = 0) {
 }
 
 export async function requestJson(path, { signal, method = "GET", body, headers = {} } = {}) {
-  if (!STAFF_API_AVAILABLE) throw new ApiError("TEMPORARILY_UNAVAILABLE", UNAVAILABLE_MESSAGE);
+  if (!STAFF_API_AVAILABLE && !(scheduleAvailable() && isScheduleRead(method, path.split("?", 1)[0]))) {
+    throw new ApiError("TEMPORARILY_UNAVAILABLE", UNAVAILABLE_MESSAGE);
+  }
   const timeout = new AbortController();
   const abort = () => timeout.abort();
   if (signal?.aborted) throw new DOMException("Aborted", "AbortError");

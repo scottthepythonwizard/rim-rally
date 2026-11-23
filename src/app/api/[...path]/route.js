@@ -1,4 +1,4 @@
-import { STAFF_API_AVAILABLE, UNAVAILABLE_MESSAGE } from "@/config/backend";
+import { isScheduleRead, scheduleAvailable, STAFF_API_AVAILABLE, UNAVAILABLE_MESSAGE } from "@/config/backend";
 import { backendBase } from "@/server/django-client";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -7,9 +7,9 @@ function unavailable() {
   return Response.json({ error: { code: "TEMPORARILY_UNAVAILABLE", message: UNAVAILABLE_MESSAGE } }, { status: 503, headers: { "Cache-Control": "private, no-store" } });
 }
 async function forward(request, { params }) {
-  if (!STAFF_API_AVAILABLE) return unavailable();
   const { path } = await params;
   const route = path.map(encodeURIComponent).join("/");
+  if (!STAFF_API_AVAILABLE && !(scheduleAvailable() && isScheduleRead(request.method, `/${route}`))) return unavailable();
   const allowed = /^(availability|open-play|holds(?:\/[^/]+)?|payment-attempts(?:\/by-key\/[^/]+|\/[^/]+(?:\/(?:proof|qr))?)?|bookings\/[^/]+(?:\/cancellations)?)$/.test(route);
   if (!allowed) return Response.json({ error: { code: "NOT_FOUND", message: "Endpoint not found." } }, { status: 404 });
   if (Number(request.headers.get("content-length") || 0) > 6 * 1024 * 1024) return Response.json({ error: { code: "FILE_TOO_LARGE", message: "Choose a PNG or JPEG up to 5 MB." } }, { status: 413 });

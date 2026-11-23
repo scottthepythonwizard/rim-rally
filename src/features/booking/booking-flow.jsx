@@ -13,7 +13,7 @@ import { addDays, manilaDate, money, normalizeOptions, selectable, toggleSlot, t
 import useHoldFlow from "./use-hold-flow";
 import HoldCountdown from "./hold-countdown";
 import GuestDetails, { GuestReview } from "./guest-details";
-import { bookingApiAvailable } from "@/config/backend";
+import { bookingApiAvailable, scheduleAvailable } from "@/config/backend";
 import { UnavailableNotice } from "@/components/ui/backend-unavailable";
 
 function requestReducer(state, action) {
@@ -24,7 +24,7 @@ function requestReducer(state, action) {
 }
 
 export default function BookingFlow(props) {
-  return bookingApiAvailable() ? <ActiveBookingFlow {...props} /> : <PausedBookingFlow {...props} />;
+  return (scheduleAvailable() || bookingApiAvailable()) ? <ActiveBookingFlow {...props} /> : <PausedBookingFlow {...props} />;
 }
 
 function PausedBookingFlow({ facility, serverNow }) {
@@ -55,7 +55,9 @@ function ActiveBookingFlow({ facility, serverNow }) {
     let active = true;
     queueMicrotask(() => {
     if (!active) return;
-    try { const record = JSON.parse(sessionStorage.getItem(PAYMENT_RECOVERY) || "null"); if (record?.credential && record?.key && record?.holdId && record?.method && Number.isSafeInteger(record.amount)) setCheckout({ record }); } catch { /* An invalid recovery record cannot authorize a payment. */ }
+    if (bookingApiAvailable()) {
+      try { const record = JSON.parse(sessionStorage.getItem(PAYMENT_RECOVERY) || "null"); if (record?.credential && record?.key && record?.holdId && record?.method && Number.isSafeInteger(record.amount)) setCheckout({ record }); } catch { /* An invalid recovery record cannot authorize a payment. */ }
+    }
     setRecoveryReady(true);
     });
     return () => { active = false; };
@@ -101,7 +103,8 @@ function ScheduleScope({ facility, options, change, initialNow, onCheckout, init
   const { sport, date, mode, scenario } = options;
   const holdContext = useMemo(() => ({ facilityId: facility.id, sport, date, mode }), [facility.id, sport, date, mode]);
   const refreshAvailability = useCallback(() => setAttempt((value) => value + 1), []);
-  const flow = useHoldFlow(holdContext, refreshAvailability, initialGuest);
+  const canBook = bookingApiAvailable();
+  const flow = useHoldFlow(holdContext, refreshAvailability, initialGuest, canBook);
   const selection = { slots: flow.hold?.slots || [], session: flow.hold?.session || null };
 
   useEffect(() => {
@@ -142,7 +145,7 @@ function ScheduleScope({ facility, options, change, initialNow, onCheckout, init
 
   const courts = view.data?.courts || [];
   const courtId = courts.some((court) => court.id === options.court) ? options.court : courts[0]?.id;
-  const blocked = view.status !== "ready" || flow.busy || flow.step !== "selection";
+  const blocked = !canBook || view.status !== "ready" || flow.busy || flow.step !== "selection";
   const sessions = view.data?.sessions || [];
   const hasData = mode === "court" ? courts.length > 0 : sessions.length > 0;
   const soldOut = hasData && (mode === "court" ? !courts.some((court) => court.slots.some((slot) => selectable(slot, now))) : !sessions.some((session) => (session.registeredCount + (session.heldCount || 0) < session.capacity || session.heldByYou) && new Date(session.startAt).getTime() > now));
@@ -181,6 +184,7 @@ function ScheduleScope({ facility, options, change, initialNow, onCheckout, init
         <p className="mt-4 text-[10px] leading-6 text-ink/60">{mode === "court" ? "Rates are per court, per hour. Select consecutive hours on one court. Midnight ends on the following day." : "One place per guest booking. Player counts refresh with availability."}</p>
       </section>}
       <PriceSummary {...{ date, sport, courts }} slots={selection.slots} session={selection.session} onClear={() => flow.cancel()} stale={view.status === "error"} disabled={flow.busy}>
+        {!canBook && <p className="mt-4 text-sm">Reservations are temporarily unavailable.</p>}
         {flow.hold && flow.step === "selection" && <button type="button" disabled={!flow.canContinue || flow.busy} onClick={() => flow.enterDetails()} className="mt-5 min-h-11 w-full rounded-full bg-ink px-5 font-editorial text-xs text-paper disabled:opacity-40">Enter guest details</button>}
       </PriceSummary>
     </div>

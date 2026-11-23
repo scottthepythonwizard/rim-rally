@@ -2,15 +2,21 @@ import { expect, test } from "@playwright/test";
 import { writeFileSync } from "node:fs";
 import AxeBuilder from "@axe-core/playwright";
 
-const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a9N8AAAAASUVORK5CYII=", "base64");
-test("guest payment, private proof, staff verification and refresh use stored backend data", async ({ page, browser }) => {
+for (const mode of ["court", "open-play"]) test(`${mode}: guest payment, private proof and staff verification use stored backend data`, async ({ page, browser, baseURL }) => {
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   const date = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Manila", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(Date.now() + 2 * 86400000));
-  await page.goto(`/book/rim-and-rally?date=${date}`);
-  await page.getByTestId(`slot-${date}_pickleball-1_8`).filter({ visible: true }).click();
+  await page.goto(`/book/rim-and-rally?date=${date}&mode=${mode}`);
+  await expect(page.getByText(/Demo mode · Sample records/)).toHaveCount(0);
+  if (mode === "open-play") {
+    await expect(page.getByRole("heading", { name: "Demo Open Play" })).toBeVisible();
+    await page.getByRole("button", { name: "Select one place" }).click();
+  } else {
+    await page.locator(`[data-testid^="slot-${date}_pickleball-"]:not([disabled]):visible`).first().click();
+  }
   await page.getByRole("button", { name: "Enter guest details", exact: true }).click();
-  await page.getByLabel("Full name", { exact: false }).fill("Integration Guest");
+  const guest = `Integration ${mode} ${Date.now()}`;
+  await page.getByLabel("Full name", { exact: false }).fill(guest);
   await page.getByLabel("Email address", { exact: false }).fill("integration-guest@example.test");
   await page.getByLabel("Philippine mobile number", { exact: false }).fill("09171234567");
   await page.getByRole("button", { name: "Review reservation", exact: true }).click();
@@ -20,11 +26,26 @@ test("guest payment, private proof, staff verification and refresh use stored ba
   await page.getByRole("button", { name: "Show payment instructions", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Awaiting staff payment review" })).toBeVisible();
   await expect(page.getByText("Payee: TEST ONLY - DO NOT PAY", { exact: false })).toBeVisible();
+  const qr = page.getByRole("img", { name: "Facility payment QR" });
+  await expect(qr).toBeVisible();
+  await expect.poll(() => qr.evaluate((image) => image.naturalWidth)).toBeGreaterThan(0);
   await page.setViewportSize({ width: 390, height: 844 });
+  await qr.scrollIntoViewIfNeeded();
+  await expect(qr).toBeInViewport();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   expect((await new AxeBuilder({ page }).include(".no-print").withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze()).violations).toEqual([]);
-  await page.getByLabel("PNG or JPEG (up to 5 MB)").setInputFiles({ name: "proof.png", mimeType: "image/png", buffer: png });
-  await page.getByLabel("Payment transaction reference", { exact: true }).fill("TEST-ONLY-47");
+  const proof = await page.evaluate((label) => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 420;
+    const context = canvas.getContext("2d");
+    context.fillStyle = "white";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.fillStyle = "black";
+    context.fillText(label, 5, 20);
+    return canvas.toDataURL("image/png").split(",")[1];
+  }, guest);
+  await page.getByLabel("PNG or JPEG (up to 5 MB)").setInputFiles({ name: "proof.png", mimeType: "image/png", buffer: Buffer.from(proof, "base64") });
+  await page.getByLabel("Payment transaction reference", { exact: true }).fill(`TEST-${guest}`);
   await page.getByRole("button", { name: "Upload payment proof", exact: true }).click();
   await expect(page.getByText("Submitted — waiting for staff review.", { exact: true })).toBeVisible();
   await page.reload();
@@ -33,31 +54,32 @@ test("guest payment, private proof, staff verification and refresh use stored ba
   const staffContext = await browser.newContext();
   const staff = await staffContext.newPage();
   staff.on("dialog", (dialog) => dialog.accept());
-  await staff.goto("http://127.0.0.1:3051/login");
+  await staff.goto(`${baseURL}/login`);
   await staff.getByLabel("Email address", { exact: true }).fill("integration-admin@example.test");
   await staff.getByLabel("Password", { exact: true }).fill("Integration-test-only!9331");
   await staff.getByRole("main").getByRole("button", { name: "Log in", exact: true }).click();
   await expect(staff).toHaveURL(/\/dashboard$/);
-  await staff.goto("http://127.0.0.1:3051/dashboard/payments");
-  await staff.getByRole("link", { name: "Integration Guest", exact: true }).click();
+  await staff.goto(`${baseURL}/dashboard/payments`);
+  await staff.getByRole("link", { name: guest, exact: true }).click();
   await expect(staff.getByRole("link", { name: /Open proof/ })).toBeVisible();
   await staff.getByLabel("Review outcome").selectOption("verified");
   await staff.getByLabel("Review reason (required for rejection)").fill("Checked test-only transfer");
-  await staff.getByLabel("Verified transaction reference (required for verification)").fill("TEST-BANK-47");
+  await staff.getByLabel("Verified transaction reference (required for verification)").fill(`BANK-${guest}`);
   await staff.getByRole("checkbox", { name: /I checked the actual payment account/ }).check();
   await staff.getByRole("button", { name: "Save proof review", exact: true }).click();
   await expect(staff.getByText("Verified", { exact: true }).first()).toBeVisible();
   await expect(page).toHaveURL(/\/booking\/.*\/confirmation/, { timeout: 15000 });
-  await expect(page.getByText("Integration Guest", { exact: true })).toBeVisible();
+  await expect(page.getByText(guest, { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "Print / Save as PDF" })).toBeEnabled();
   await page.reload();
-  await expect(page.getByText("Integration Guest", { exact: true })).toBeVisible();
+  await expect(page.getByText(guest, { exact: true })).toBeVisible();
   const recovery = await page.evaluate(() => JSON.parse(sessionStorage.getItem("rim-rally:payment-recovery:v1")));
   const bookingId = new URL(page.url()).pathname.split("/")[2];
   const receiptResponse = await page.request.get(`/api/bookings/${bookingId}`, { headers: { "X-Guest-Recovery": recovery.credential } });
   const receipt = await receiptResponse.json();
-  writeFileSync("test-results/integration-session.json", JSON.stringify({ bookingId, credential: recovery.credential, ticketToken: receipt.ticketToken }));
-  expect((await staffContext.request.get(`http://127.0.0.1:8051/api/staff/tickets/${encodeURIComponent(receipt.ticketToken)}`)).status()).toBe(200);
+  if (mode === "court" && !process.env.RIM_RALLY_DEMO_ORIGIN) writeFileSync("test-results/integration-session.json", JSON.stringify({ bookingId, credential: recovery.credential, ticketToken: receipt.ticketToken }));
+  const backend = process.env.RIM_RALLY_DEMO_ORIGIN ? "http://127.0.0.1:8030" : "http://127.0.0.1:8051";
+  expect((await staffContext.request.get(`${backend}/api/staff/tickets/${encodeURIComponent(receipt.ticketToken)}`)).status()).toBe(200);
   expect((await page.request.get(`/api/bookings/${bookingId}`, { headers: { "X-Guest-Recovery": "different-test-credential-123456" } })).status()).toBe(404);
   expect(errors).toEqual([]);
   await staff.getByRole("button", { name: "Sign out", exact: true }).click();
